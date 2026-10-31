@@ -1,6 +1,9 @@
 import { db } from "../prisma/db";
 import { isLegalBall } from "./analysis.service";
+import { visibleSequence } from "./replay.service";
 import type {
+  BattingEntry,
+  FieldingEntry,
   MatchDetails,
   MatchListItem,
   MatchScorecard,
@@ -65,23 +68,27 @@ export async function getMatchById(matchId: string): Promise<MatchDetails | null
   };
 }
 
-export async function getMatchScorecard(matchId: string): Promise<MatchScorecard | null> {
-  const match = await matches.first({ id: matchId });
-  if (!match) return null;
+const norm = (t: string | null) => (t ?? "").toLowerCase().replace(/[^a-z]/g, "");
 
-  const performances = await db.orm.public.PlayerPerformance.where({ matchId })
-    .include("player")
-    .include("batting")
-    .include("bowling")
-    .include("fielding")
-    .all();
+type ScoreEvent = Awaited<ReturnType<typeof visibleEvents>>["list"][number];
 
+// Events that have happened so far: all of them, or only up to the replay position.
+async function visibleEvents(matchId: string) {
+  const visible = await visibleSequence(matchId);
   const events = await db.orm.public.MatchEvent.where({ matchId })
     .include("team")
     .include("cricketDelivery")
     .include("cricketWicket")
     .all();
+  return {
+    replaying: visible !== null,
+    list: events
+      .filter((e) => visible === null || Number(e.sequenceNumber) <= visible)
+      .sort((a, b) => Number(a.sequenceNumber) - Number(b.sequenceNumber)),
+  };
+}
 
+function teamTotals(events: ScoreEvent[]): TeamTotal[] {
   const totals = new Map<string, TeamTotal>();
   for (const e of events) {
     if (!e.team || (!e.cricketDelivery && !e.cricketWicket)) continue;
@@ -99,12 +106,103 @@ export async function getMatchScorecard(matchId: string): Promise<MatchScorecard
     if (e.cricketWicket) t.wickets += 1;
     totals.set(t.teamId, t);
   }
+  return [...totals.values()];
+}
+
+// Replay mode: player stats rebuilt from the visible deliveries instead of the final precomputed rows.
+function replayPlayerStats(events: ScoreEvent[], names: Map<string, string>) {
+  const name = (id: string) => names.get(id) ?? id;
+  const bat = new Map<string, BattingEntry>();
+  const bowl = new Map<string, { legal: number; runs: number; wickets: number; maidens: number }>();
+  const over = new Map<string, { bowlerId: string; legal: number; runs: number }>();
+  const field = new Map<string, FieldingEntry>();
+  const batter = (id: string) => {
+    if (!bat.has(id)) {
+      bat.set(id, { playerId: id, playerName: name(id), runs: 0, balls: 0, fours: 0, sixes: 0, strikeRate: 0, dismissalType: null });
+    }
+    return bat.get(id)!;
+  };
+
+  for (const e of events) {
+    const d = e.cricketDelivery;
+    if (d) {
+      const legal = isLegalBall(d.extraType);
+      const b = batter(d.batterId);
+      b.runs += d.batterRuns;
+      if (legal) b.balls += 1;
+      if (d.isBoundary && d.batterRuns === 4) b.fours += 1;
+      if (d.isBoundary && d.batterRuns === 6) b.sixes += 1;
+
+      // wides/no-balls are charged to the bowler; byes/leg-byes are not
+      const charged = legal ? d.batterRuns : d.totalRuns;
+      const o = bowl.get(d.bowlerId) ?? { legal: 0, runs: 0, wickets: 0, maidens: 0 };
+      o.runs += charged;
+      if (legal) o.legal += 1;
+      bowl.set(d.bowlerId, o);
+
+      const key = `${e.periodId}:${d.overNumber}:${d.bowlerId}`;
+      const ov = over.get(key) ?? { bowlerId: d.bowlerId, legal: 0, runs: 0 };
+      ov.runs += charged;
+      if (legal) ov.legal += 1;
+      over.set(key, ov);
+    }
+    const w = e.cricketWicket;
+    if (w) {
+      batter(w.playerId).dismissalType = w.wicketType;
+      const type = norm(w.wicketType);
+      if (d && type !== "runout") bowl.get(d.bowlerId)!.wickets += 1;
+      if (w.fielderId) {
+        const f = field.get(w.fielderId) ?? { playerId: w.fielderId, playerName: name(w.fielderId), catches: 0, runOuts: 0, stumpings: 0, missedCatches: 0 };
+        if (type === "caught") f.catches += 1;
+        else if (type === "runout") f.runOuts += 1;
+        else if (type === "stumped") f.stumpings += 1;
+        field.set(w.fielderId, f);
+      }
+    }
+  }
+  for (const ov of over.values()) if (ov.legal === 6 && ov.runs === 0) bowl.get(ov.bowlerId)!.maidens += 1;
+
+  const round = (n: number) => Math.round(n * 100) / 100;
+  return {
+    batting: [...bat.values()].map((b) => ({ ...b, strikeRate: b.balls ? round((b.runs / b.balls) * 100) : 0 })),
+    bowling: [...bowl].map(([id, o]) => ({
+      playerId: id,
+      playerName: name(id),
+      overs: Number(`${Math.floor(o.legal / 6)}.${o.legal % 6}`),
+      runsConceded: o.runs,
+      wickets: o.wickets,
+      maidens: o.maidens,
+      economy: o.legal ? round(o.runs / (o.legal / 6)) : 0,
+    })),
+    fielding: [...field.values()],
+  };
+}
+
+export async function getMatchScorecard(matchId: string): Promise<MatchScorecard | null> {
+  const match = await matches.first({ id: matchId });
+  if (!match) return null;
+
+  const { replaying, list: events } = await visibleEvents(matchId);
+  const totals = teamTotals(events);
+
+  if (replaying) {
+    const players = await db.orm.public.MatchPlayer.where({ matchId }).include("player").all();
+    const names = new Map(players.map((mp) => [mp.playerId, mp.player.displayName ?? mp.player.name]));
+    return { matchId, totals, ...replayPlayerStats(events, names) };
+  }
+
+  const performances = await db.orm.public.PlayerPerformance.where({ matchId })
+    .include("player")
+    .include("batting")
+    .include("bowling")
+    .include("fielding")
+    .all();
 
   const name = (p: { name: string; displayName: string | null }) => p.displayName ?? p.name;
 
   return {
     matchId,
-    totals: [...totals.values()],
+    totals,
     batting: performances.flatMap((p) =>
       p.batting
         ? [{

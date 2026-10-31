@@ -1,14 +1,9 @@
 import { Router } from "express";
+import { askQuestion, getInsights } from "../../controllers/ai.controller";
 
 const router = Router();
 
-// ponytail: placeholder handlers, replace with controllers
-router.get("/:matchId/insights", (_req, res) => {
-  res.status(501).json({ message: "Not implemented" });
-});
-
-router.post("/:matchId/ask", (_req, res) => {
-  res.status(501).json({ message: "Not implemented" });
-});
+router.get("/:matchId/insights", getInsights);
+router.post("/:matchId/ask", askQuestion);
 
 export default router;

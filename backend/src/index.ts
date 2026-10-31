@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { checkDatabaseConnection } from "./config/database.config.js";
+import { checkDatabaseConnection } from "./config/database.config";
+import apiRouter from "./routes/index";
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.get("/health", (_req, res) => {
     service: "matchpulse-backend",
   });
 });
+
+app.use("/api", apiRouter);
 
 const PORT = process.env.PORT || 5000;
 

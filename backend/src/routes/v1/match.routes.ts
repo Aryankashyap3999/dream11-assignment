@@ -1,18 +1,14 @@
 import { Router } from "express";
+import {
+  getMatchById,
+  getMatchScorecard,
+  getMatches,
+} from "../../controllers/match.controller";
 
 const router = Router();
 
-// ponytail: placeholder handlers, replace with controllers
-router.get("/", (_req, res) => {
-  res.status(501).json({ message: "Not implemented" });
-});
-
-router.get("/:matchId", (_req, res) => {
-  res.status(501).json({ message: "Not implemented" });
-});
-
-router.get("/:matchId/scorecard", (_req, res) => {
-  res.status(501).json({ message: "Not implemented" });
-});
+router.get("/", getMatches);
+router.get("/:matchId", getMatchById);
+router.get("/:matchId/scorecard", getMatchScorecard);
 
 export default router;

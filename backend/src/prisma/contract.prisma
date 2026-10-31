@@ -1,21 +1,298 @@
 // use prisma-8
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt TimestamptzString @default(now())
+model Sport {
+  id        String   @id @onCreate(uuid())
+  code      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  matches Match[]
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
-  updatedAt TimestamptzString @default(now())
+model Match {
+  id             String   @id @onCreate(uuid())
+  sportId        String
+  name           String
+  format         String?
+  status         String
+  venue          String?
+  startTime      DateTime?
+  endTime        DateTime?
+  lastUpdatedAt  DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  sport          Sport              @relation(fields: [sportId], references: [id])
+  teams          MatchTeam[]
+  players        MatchPlayer[]
+  periods        MatchPeriod[]
+  events         MatchEvent[]
+  performances   PlayerPerformance[]
+  keyMoments     KeyMoment[]
+  aiInsights     AiInsight[]
+  demoSessions   DemoSession[]
+
+  @@index([sportId])
+  @@index([status])
+  @@index([startTime])
+}
+
+model Team {
+  id          String   @id @onCreate(uuid())
+  name        String
+  shortName   String?
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+
+  matches     MatchTeam[]
+  players     TeamPlayer[]
+  matchPlayers MatchPlayer[]
+  events      MatchEvent[]
+  keyMoments  KeyMoment[]
+}
+
+model MatchTeam {
+  id        String @id @onCreate(uuid())
+  matchId   String
+  teamId    String
+  role      String?
+  position  Int?
+
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  team  Team  @relation(fields: [teamId], references: [id])
+
+  @@unique([matchId, teamId])
+  @@index([teamId])
+}
+
+model Player {
+  id          String    @id @onCreate(uuid())
+  name        String
+  displayName String?
+  nationality String?
+  dateOfBirth DateTime?
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+
+  teams        TeamPlayer[]
+  matches      MatchPlayer[]
+  events       MatchEvent[]
+  performances PlayerPerformance[]
+}
+
+model TeamPlayer {
+  id       String    @id @onCreate(uuid())
+  teamId   String
+  playerId String
+  role     String?
+  joinedAt DateTime?
+  leftAt   DateTime?
+
+  team   Team   @relation(fields: [teamId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+
+  @@unique([teamId, playerId])
+  @@index([playerId])
+}
+
+model MatchPlayer {
+  id          String  @id @onCreate(uuid())
+  matchId     String
+  playerId    String
+  teamId      String
+  role        String?
+  isStarting  Boolean @default(false)
+
+  match  Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id])
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  @@unique([matchId, playerId])
+  @@index([teamId])
+}
+
+model MatchPeriod {
+  id           String    @id @onCreate(uuid())
+  matchId      String
+  periodNumber Int
+  periodType   String
+  startTime    DateTime?
+  endTime      DateTime?
+
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  @@unique([matchId, periodNumber])
+}
+
+model MatchEvent {
+  id             String    @id @onCreate(uuid())
+  matchId        String
+  periodId       String?
+  eventType      String
+  sequenceNumber BigInt
+  timestamp      DateTime?
+  teamId         String?
+  playerId       String?
+  createdAt      DateTime  @default(now())
+
+  match  Match        @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  period MatchPeriod? @relation(fields: [periodId], references: [id])
+  team   Team?        @relation(fields: [teamId], references: [id])
+  player Player?      @relation(fields: [playerId], references: [id])
+
+  cricketDelivery CricketDelivery?
+  cricketWicket   CricketWicket?
+  keyMoments      KeyMoment[]
+
+  @@unique([matchId, sequenceNumber])
+  @@index([matchId, timestamp])
+  @@index([eventType])
+}
+
+model PerformanceType {
+  id          String   @id @onCreate(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  performances PlayerPerformance[]
+}
+
+model PlayerPerformance {
+  id                String @id @onCreate(uuid())
+  matchId           String
+  playerId          String
+  performanceTypeId String
+  createdAt         DateTime @default(now())
+
+  match           Match           @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player          Player          @relation(fields: [playerId], references: [id])
+  performanceType PerformanceType @relation(fields: [performanceTypeId], references: [id])
+
+  batting  CricketBattingPerformance?
+  bowling  CricketBowlingPerformance?
+  fielding CricketFieldingPerformance?
+
+  @@unique([matchId, playerId, performanceTypeId])
+  @@index([playerId])
+}
+
+model CricketDelivery {
+  eventId     String @id
+  overNumber  Int
+  ballNumber  Int
+  batterId    String
+  bowlerId    String
+  totalRuns   Int    @default(0)
+  batterRuns  Int    @default(0)
+  extras      Int    @default(0)
+  extraType   String?
+  isBoundary  Boolean @default(false)
+
+  event  MatchEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  batter Player     @relation("DeliveryBatter", fields: [batterId], references: [id])
+  bowler Player     @relation("DeliveryBowler", fields: [bowlerId], references: [id])
+
+  @@index([eventId])
+  @@index([batterId])
+  @@index([bowlerId])
+}
+
+model CricketWicket {
+  eventId    String @id
+  playerId   String
+  wicketType String
+  fielderId  String?
+
+  event   MatchEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  player  Player     @relation("WicketPlayer", fields: [playerId], references: [id])
+  fielder Player?    @relation("WicketFielder", fields: [fielderId], references: [id])
+
+  @@index([playerId])
+}
+
+model CricketBattingPerformance {
+  performanceId String  @id
+  runs          Int     @default(0)
+  balls         Int     @default(0)
+  fours         Int     @default(0)
+  sixes         Int     @default(0)
+  strikeRate    Numeric(6, 2)
+  dismissalType String?
+  dismissedBy   String?
+
+  performance PlayerPerformance @relation(fields: [performanceId], references: [id], onDelete: Cascade)
+  dismissedByPlayer Player? @relation("DismissedBatter", fields: [dismissedBy], references: [id])
+}
+
+model CricketBowlingPerformance {
+  performanceId String  @id
+  overs         Numeric(5, 1) @default(0)
+  runsConceded  Int     @default(0)
+  wickets       Int     @default(0)
+  maidens       Int     @default(0)
+  economy       Numeric(6, 2)
+
+  performance PlayerPerformance @relation(fields: [performanceId], references: [id], onDelete: Cascade)
+}
+
+model CricketFieldingPerformance {
+  performanceId  String @id
+  catches        Int    @default(0)
+  runOuts        Int    @default(0)
+  stumpings      Int    @default(0)
+  missedCatches  Int    @default(0)
+
+  performance PlayerPerformance @relation(fields: [performanceId], references: [id], onDelete: Cascade)
+}
+
+model KeyMoment {
+  id          String   @id @onCreate(uuid())
+  matchId     String
+  eventId     String?
+  teamId      String?
+  momentType  String
+  impactScore Numeric(6, 2)?
+  title       String?
+  description String?
+  detectedAt  DateTime @default(now())
+
+  match Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  event MatchEvent? @relation(fields: [eventId], references: [id])
+  team  Team?       @relation(fields: [teamId], references: [id])
+
+  @@index([matchId, detectedAt])
+  @@index([momentType])
+}
+
+model AiInsight {
+  id           String   @id @onCreate(uuid())
+  matchId      String
+  keyMomentId  String?
+  question     String?
+  headline     String?
+  whatChanged  String?
+  whyItMatters String?
+  watchNext    String?
+  model        String?
+  promptVersion String?
+  createdAt    DateTime @default(now())
+
+  match     Match      @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  keyMoment KeyMoment? @relation(fields: [keyMomentId], references: [id])
+
+  @@index([matchId, createdAt])
+}
+
+model DemoSession {
+  id              String   @id @onCreate(uuid())
+  matchId         String
+  currentSequence BigInt   @default(0)
+  status          String   @default("PAUSED")
+  startedAt       DateTime?
+  updatedAt       DateTime @default(now())
+
+  match Match @relation(fields: [matchId], references: [id])
+
+  @@index([matchId])
 }

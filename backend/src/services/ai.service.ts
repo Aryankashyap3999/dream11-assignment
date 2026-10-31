@@ -30,6 +30,22 @@ function contradictsScore(insight: AIInsight, runs: number, wickets: number): bo
   );
 }
 
+// Cheap guard for invented counts: "two fours", "3 sixes", "two boundaries" must match recentForm.last6Balls.
+// ponytail: only checks spelled counts of fours/sixes/boundaries; not a general fact checker.
+const WORD_NUMBERS: Record<string, number> = { a: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6 };
+function inventsCounts(answer: string, context: AIContext): boolean {
+  const balls = context.analysis.recentForm.last6Balls;
+  const actual: Record<string, number> = {
+    four: balls.filter((b) => b.isBoundary && b.totalRuns === 4).length,
+    six: balls.filter((b) => b.isBoundary && b.totalRuns === 6).length,
+    boundar: balls.filter((b) => b.isBoundary).length,
+  };
+  const claim = /\b(\d+|a|one|two|three|four|five|six)\s+(four|six|boundar)(?:s|es|ies|y)?\b/gi;
+  return [...answer.matchAll(claim)].some(
+    (m) => (WORD_NUMBERS[m[1].toLowerCase()] ?? Number(m[1])) !== actual[m[2].toLowerCase()],
+  );
+}
+
 const INSIGHT_ATTEMPTS = 2;
 
 export async function getInsight(matchId: string): Promise<AIInsight | null> {
@@ -46,5 +62,10 @@ export async function getInsight(matchId: string): Promise<AIInsight | null> {
 
 export async function askQuestion(matchId: string, question: string): Promise<AIAnswer | null> {
   const context = await buildContext(matchId);
-  return context && { answer: await getAIProvider().answerQuestion(context, question) };
+  if (!context) return null;
+  for (let attempt = 1; attempt <= INSIGHT_ATTEMPTS; attempt++) {
+    const answer = await getAIProvider().answerQuestion(context, question);
+    if (!inventsCounts(answer, context)) return { answer };
+  }
+  throw new Error("AI answer invented a boundary count after retry");
 }

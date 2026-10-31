@@ -24,10 +24,11 @@ const seq = (e: Event) => Number(e.sequenceNumber);
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 
 // wides and no-balls are not legal deliveries; byes/leg-byes are.
-function isLegal(d: Delivery) {
-  const t = (d.cricketDelivery.extraType ?? "").toLowerCase().replace(/[^a-z]/g, "");
+export function isLegalBall(extraType: string | null) {
+  const t = (extraType ?? "").toLowerCase().replace(/[^a-z]/g, "");
   return !["wide", "wd", "noball", "nb"].includes(t);
 }
+const isLegal = (d: Delivery) => isLegalBall(d.cricketDelivery.extraType);
 
 // Max balls per innings for known limited-overs formats only.
 function maxBalls(format: string | null): number | null {

@@ -1,4 +1,5 @@
 import { db } from "../prisma/db";
+import { isLegalBall } from "./analysis.service";
 import type {
   MatchDetails,
   MatchListItem,
@@ -93,7 +94,7 @@ export async function getMatchScorecard(matchId: string): Promise<MatchScorecard
     };
     if (e.cricketDelivery) {
       t.runs += e.cricketDelivery.totalRuns;
-      t.balls += 1;
+      if (isLegalBall(e.cricketDelivery.extraType)) t.balls += 1;
     }
     if (e.cricketWicket) t.wickets += 1;
     totals.set(t.teamId, t);

@@ -1,4 +1,5 @@
 import { db } from "../prisma/db";
+import { visibleSequence } from "./replay.service";
 import type {
   AnalysisResponse,
   KeyMoment,
@@ -92,8 +93,10 @@ function detectMoments(balls: Delivery[]): KeyMoment[] {
   return moments.slice(-5);
 }
 
-async function keyMoments(matchId: string, balls: Delivery[]): Promise<KeyMoment[]> {
-  const rows = await db.orm.public.KeyMoment.where({ matchId }).all();
+async function keyMoments(matchId: string, balls: Delivery[], visibleIds: Set<string>): Promise<KeyMoment[]> {
+  const rows = (await db.orm.public.KeyMoment.where({ matchId }).all()).filter(
+    (k) => !k.eventId || visibleIds.has(k.eventId),
+  );
   if (!rows.length) return detectMoments(balls);
   return rows
     .sort((a, b) => b.detectedAt.getTime() - a.detectedAt.getTime())
@@ -144,7 +147,11 @@ export async function getMatchAnalysis(matchId: string): Promise<AnalysisRespons
   const match = await db.orm.public.Match.first({ id: matchId });
   if (!match) return null;
 
-  const events = (await eventsQuery().where({ matchId }).all()).sort((a, b) => seq(a) - seq(b));
+  // replay boundary: only events up to the session's currentSequence have "happened"
+  const visible = await visibleSequence(matchId);
+  const events = (await eventsQuery().where({ matchId }).all())
+    .filter((e) => visible === null || seq(e) <= visible)
+    .sort((a, b) => seq(a) - seq(b));
   const allBalls = events.filter(hasDelivery);
   const latest = allBalls.at(-1);
 
@@ -191,7 +198,7 @@ export async function getMatchAnalysis(matchId: string): Promise<AnalysisRespons
     },
     recentForm: recentForm(balls),
     momentum: momentum(balls),
-    keyMoments: await keyMoments(matchId, balls),
+    keyMoments: await keyMoments(matchId, balls, new Set(events.map((e) => e.id))),
     playerToWatch: await playerToWatch(matchId, balls),
   };
 }

@@ -100,3 +100,10 @@ export interface AIInsight {
 export interface AskResponse {
   answer: string
 }
+
+export interface Replay {
+  matchId: string
+  status: 'IDLE' | 'RUNNING' | 'PAUSED' | 'COMPLETED'
+  currentSequence: number | null
+  nextSequence: number | null
+}

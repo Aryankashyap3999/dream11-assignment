@@ -8,6 +8,7 @@ import ScoreSummary from '../../components/molecules/ScoreSummary'
 import SituationStats from '../../components/molecules/SituationStats'
 import AIInsightCard from '../../components/organisms/AIInsightCard'
 import AskMatchPulse from '../../components/organisms/AskMatchPulse'
+import ReplayControls from '../../components/organisms/ReplayControls'
 import { useMatch } from '../../hooks/apis/matches'
 
 export default function Match() {
@@ -27,6 +28,7 @@ export default function Match() {
   return (
     <main className="mx-auto max-w-3xl space-y-4 p-4 sm:p-8">
       <MatchHeader match={match} />
+      <ReplayControls matchId={matchId} />
       <ScoreSummary match={match} />
       <SituationStats matchId={matchId} />
       <AIInsightCard matchId={matchId} />

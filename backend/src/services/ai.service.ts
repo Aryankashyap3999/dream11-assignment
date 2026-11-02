@@ -2,6 +2,7 @@ import { getAIProvider } from "../ai/ai.provider";
 import type { AIAnswer, AIContext, AIInsight } from "../dto/ai.dto";
 import { getMatchAnalysis } from "./analysis.service";
 import { generateGuarded } from "./ai.safety";
+import { routeQuestion } from "./ai.question-router";
 import { getMatchById } from "./match.service";
 
 async function buildContext(matchId: string): Promise<AIContext | null> {
@@ -64,6 +65,8 @@ export async function getInsight(matchId: string): Promise<AIInsight | null> {
 export async function askQuestion(matchId: string, question: string): Promise<AIAnswer | null> {
   const context = await buildContext(matchId);
   if (!context) return null;
+  const routed = routeQuestion(question, context);
+  if (routed.route !== "LLM") return { answer: routed.answer };
   const answer = await generateGuarded(
     context,
     (note) => getAIProvider().answerQuestion(context, question, note),

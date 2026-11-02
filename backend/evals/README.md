@@ -60,6 +60,8 @@ cd backend
 npm run eval:ai
 ```
 
+Calls to the LLM are spaced by `EVAL_DELAY_MS` (default 4000; `0` disables), e.g. `EVAL_DELAY_MS=8000 npm run eval:ai`. Router-answered/refused cases are never delayed. Provider 429s that survive the production retry are still reported as `PROVIDER_ERROR`.
+
 Needs `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL` (loaded from `.env`). It makes 120 real provider calls. Output: a terminal summary and `evals/results/ai-baseline-<timestamp>.json` (totals, per-category and per-case tallies, failure patterns, every answer). API keys are never printed or written; error text is redacted.
 
 The command exits non-zero only when the harness itself fails (bad suite, missing env, every execution erroring before an answer). Failed assertions do not change the exit code.

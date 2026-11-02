@@ -189,3 +189,19 @@ test("coverage summary", () => {
   count("Live context (live LLM cases)", CASES.filter((c) => c.category === "Live context").length);
   console.log("deterministic checks by category:", JSON.stringify(tally));
 });
+
+test("eval pacing: default, parsing, and delay only between LLM calls", async () => {
+  const { DEFAULT_DELAY_MS, makePacer, parseDelayMs } = await import("../evals/pacing");
+  assert.equal(parseDelayMs(undefined), DEFAULT_DELAY_MS);
+  assert.equal(parseDelayMs("0"), 0);
+  assert.equal(parseDelayMs("2500"), 2500);
+  assert.throws(() => parseDelayMs("-1"));
+  assert.throws(() => parseDelayMs("abc"));
+  const slept: number[] = [];
+  const pace = makePacer(100, async (ms) => { slept.push(ms); });
+  await pace(); await pace(); await pace();
+  assert.deepEqual(slept, [100, 100]); // none before the first call
+  const off = makePacer(0, async (ms) => { slept.push(ms); });
+  await off(); await off();
+  assert.equal(slept.length, 2);
+});

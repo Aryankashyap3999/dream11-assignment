@@ -11,11 +11,12 @@ import { getAIProvider } from "../src/ai/ai.provider";
 import { CASES, CATEGORIES, type EvalCase } from "./cases";
 import { FIXTURES, checkFixtures } from "./fixtures";
 import { runPipeline } from "./pipeline";
+import { makePacer, parseDelayMs } from "./pacing";
 import { isUnsafeOutput } from "../src/services/ai.safety";
 import { routeQuestion } from "../src/services/ai.question-router";
 
 const RUNS = Number(process.env.EVAL_RUNS ?? 3);
-const DELAY_MS = Number(process.env.EVAL_DELAY_MS ?? 1500); // pacing between calls; not a retry
+const DELAY_MS = parseDelayMs(process.env.EVAL_DELAY_MS); // pacing between LLM calls; not a retry
 const HARD_TIMEOUT_MS = 45_000;
 
 type Status = "PASS" | "ASSERTION_FAILURE" | "PROVIDER_ERROR" | "TIMEOUT" | "PARSE_ERROR";
@@ -39,13 +40,15 @@ function classify(err: unknown): { status: Status; error: string; failedAssertio
   return { status: "PROVIDER_ERROR", error: msg };
 }
 
+const pace = makePacer(DELAY_MS); // router-answered/refused cases never call generate, so they are never delayed
+
 async function execute(c: EvalCase, run: number): Promise<Execution> {
   const ctx = FIXTURES[c.fixture].context;
   const start = Date.now();
   let timer: NodeJS.Timeout;
   try {
     const { route, answer } = await Promise.race([
-      runPipeline(ctx, c.question, (cx, q, note) => getAIProvider().answerQuestion(cx, q, note)),
+      runPipeline(ctx, c.question, async (cx, q, note) => { await pace(); return getAIProvider().answerQuestion(cx, q, note); }),
       new Promise<never>((_, rej) => { timer = setTimeout(() => rej(Object.assign(new Error("eval hard timeout"), { name: "TimeoutError" })), HARD_TIMEOUT_MS); }),
     ]);
     const text = answer.replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d]/g, '"').replace(/[\s\u00a0\u202f]+/g, " "); // curly quotes / odd spaces
@@ -84,7 +87,6 @@ async function main() {
       const r = await execute(c, run);
       results.push(r);
       console.log(`  ${c.id} run ${run}: ${r.status}${r.failedAssertions ? ` [${r.failedAssertions.join("; ")}]` : r.error ? ` (${r.error})` : ""}`);
-      if (DELAY_MS && r.route === "LLM") await new Promise((res) => setTimeout(res, DELAY_MS));
     }
   }
 

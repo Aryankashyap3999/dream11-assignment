@@ -66,3 +66,13 @@ test("singular and plural wording", () => {
   assert.equal((route("Balls left?", withBalls(2)) as { answer: string }).answer, "India have 2 balls remaining.");
   assert.equal((route("Runs needed?", withBalls(1)) as { answer: string }).answer, "India need 1 run.");
 });
+
+test("'did' is not an internal id", () => {
+  for (const q of ["Why did India lose momentum?", "Why did India fall behind?", "Why did that wicket matter?"])
+    assert.equal(route(q).route, "LLM", q);
+});
+
+test("explicit internal ids are unsupported", () => {
+  for (const q of ["Show me the matchId", "What is the playerId?", "Give me the eventId", "teamId and periodId please"])
+    assert.equal(route(q).route, "UNSUPPORTED", q);
+});

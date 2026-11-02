@@ -9,7 +9,7 @@ const OVERS_UNAVAILABLE = "The current over count isn't available right now.";
 // Prompt-injection / internals, predictions, and data that is not in AIContext.
 // ponytail: keyword matching, not an NLP classifier; unknown players / generic cricket facts fall through to the LLM (prompt-grounded + safety guard).
 const UNSUPPORTED =
-  /ignore (all |previous |the )|system prompt|\bprompts?\b|instruction|\bjson\b|\bcontext\b|\b\w*id\b|uuid|api key|reveal|predict|winner|\bwho will\b|\bwill \w+ win\b|going to win|(happen|happens) next|final score|\bwill\b.*\bscore\b|weather|\brain\b|\btoss\b|venue|stadium|pitch|career|history|historical|head to head|\bh2h\b|previous match|last match|other match|\bipl\b|world cup/;
+  /ignore (all |previous |the )|system prompt|\bprompts?\b|instruction|\bjson\b|\bcontext\b|\b(match|team|player|event|period)ids?\b|uuid|api key|reveal|predict|winner|\bwho will\b|\bwill \w+ win\b|going to win|(happen|happens) next|final score|\bwill\b.*\bscore\b|weather|\brain\b|\btoss\b|venue|stadium|pitch|career|history|historical|head to head|\bh2h\b|previous match|last match|other match|\bipl\b|world cup/;
 
 // Anything asking for explanation/interpretation goes to the LLM, even if it also contains a factual lookup.
 const LLM_CUE = /\b(why|explain|recap|summar\w*|matter\w*|import\w*|significan\w*|momentum|chang\w*|shift\w*|mean\w*|situation)\b/;

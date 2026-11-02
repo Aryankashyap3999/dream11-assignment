@@ -12,7 +12,7 @@ const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "e
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // Sentence-level negation guard: "India did not lose three wickets" must not count as affirming it.
-const NEG = /\b(no|not|never|none|without|neither|nor|cannot)\b|n't|\b(zero|ignor\w*|disregard\w*|instead|rather|incorrect|false|unsupported)\b/i;
+const NEG = /\b(no|not|never|none|without|neither|nor|cannot|0)\b|n't|\b(zero|ignor\w*|disregard\w*|instead|rather|incorrect|false|unsupported)\b/i;
 const sentences = (s: string) => s.split(/(?<=[.!?])\s+(?=[A-Z"'(])|\n+/).filter(Boolean);
 
 export const mentionsNumber = (answer: string, n: number) => {

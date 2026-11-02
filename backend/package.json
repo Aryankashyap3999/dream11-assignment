@@ -9,6 +9,7 @@
     "dev": "tsx watch src/index.ts",
     "db:seed": "tsx scripts/seed-demo.ts",
     "build": "tsc",
+    "eval:ai": "tsx evals/run.ts",
     "start": "node --import tsx dist/index.js",
     "postinstall": "prisma skills sync || exit 0",
     "contract:emit": "prisma contract emit"

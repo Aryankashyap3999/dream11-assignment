@@ -1,4 +1,4 @@
-# MatchPulse AI evaluation harness (baseline)
+# MatchPulse AI evaluation harness
 
 > This harness measures the current AI implementation and does not modify production AI behavior.
 
@@ -65,3 +65,11 @@ Needs `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL` (loaded from `.env`). It makes 120
 The command exits non-zero only when the harness itself fails (bad suite, missing env, every execution erroring before an answer). Failed assertions do not change the exit code.
 
 Type-check the harness with `npx tsc -p evals` (the root `tsc` only covers `src/`).
+
+## Pipeline evaluation (added with router / safety / live-context / retry)
+
+- `pipeline.ts` mirrors `askQuestion()` without the DB: router, then safety-guarded provider call (provider retry included). `inventsCounts` is private to `ai.service.ts` and not exercised.
+- `npm run eval:ai` now measures that pipeline. Router-answered/refused questions make no provider call and run once; only LLM-routed questions run `EVAL_RUNS` (default 3) times. Statuses: `PASS`, `ASSERTION_FAILURE`, `PROVIDER_ERROR`, `TIMEOUT`, `PARSE_ERROR`; provider 429s are never counted as quality failures. A model producing unsafe output twice is an `ASSERTION_FAILURE`.
+- Fixtures now carry `live` (batter, bowler, latest event). Fixture E is a wicket position (61/3, caught); D is an early replay position. The `live` blocks are hand-authored.
+- 45 cases: the original 40 plus 5 "Live context" cases. Stat-01/02 now expect an answer because the batter on strike has stats in `live`.
+- `tests/ai.eval.test.ts` (runs under `npm test`, no network) is the deterministic half: exact router answers on fixtures A/D/E/B, explanations route to the LLM, unsupported/predictive questions never reach the provider, injection and leak shapes are blocked by the safety guard, live context is present in the prompt and an early replay prompt contains no later state, and extra provider-retry bounds (5xx, non-retryable 4xx, 3-call cap, 40 s budget).

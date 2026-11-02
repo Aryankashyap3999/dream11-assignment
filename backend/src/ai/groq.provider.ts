@@ -31,8 +31,8 @@ export function createGroqProvider(apiKey: string, model: string): AIProvider {
   }
 
   return {
-    async generateInsight(context: AIContext): Promise<AIInsight> {
-      const parsed = JSON.parse(await generate(insightPrompt(context), true));
+    async generateInsight(context: AIContext, note?: string): Promise<AIInsight> {
+      const parsed = JSON.parse(await generate(insightPrompt(context, note), true));
       for (const f of ["headline", "whatChanged", "whyItMatters", "watchNext"] as const) {
         if (typeof parsed[f] !== "string" || !parsed[f]) throw new Error(`AI insight missing "${f}"`);
       }
@@ -40,8 +40,8 @@ export function createGroqProvider(apiKey: string, model: string): AIProvider {
       return { headline, whatChanged, whyItMatters, watchNext };
     },
 
-    answerQuestion(context: AIContext, question: string): Promise<string> {
-      return generate(questionPrompt(context, question), false);
+    answerQuestion(context: AIContext, question: string, note?: string): Promise<string> {
+      return generate(questionPrompt(context, question, note), false);
     },
   };
 }

@@ -3,8 +3,8 @@ import { createGeminiProvider } from "./gemini.provider";
 import { createGroqProvider } from "./groq.provider";
 
 export interface AIProvider {
-  generateInsight(context: AIContext): Promise<AIInsight>;
-  answerQuestion(context: AIContext, question: string): Promise<string>;
+  generateInsight(context: AIContext, note?: string): Promise<AIInsight>;
+  answerQuestion(context: AIContext, question: string, note?: string): Promise<string>;
 }
 
 let provider: AIProvider | undefined;

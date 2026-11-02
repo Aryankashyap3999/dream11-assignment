@@ -1,6 +1,7 @@
 import { getAIProvider } from "../ai/ai.provider";
 import type { AIAnswer, AIContext, AIInsight } from "../dto/ai.dto";
 import { getMatchAnalysis } from "./analysis.service";
+import { generateGuarded } from "./ai.safety";
 import { getMatchById } from "./match.service";
 
 async function buildContext(matchId: string): Promise<AIContext | null> {
@@ -46,26 +47,29 @@ function inventsCounts(answer: string, context: AIContext): boolean {
   );
 }
 
-const INSIGHT_ATTEMPTS = 2;
-
 export async function getInsight(matchId: string): Promise<AIInsight | null> {
   const context = await buildContext(matchId);
   if (!context) return null;
 
   const { runs, wickets } = context.analysis.situation;
-  for (let attempt = 1; attempt <= INSIGHT_ATTEMPTS; attempt++) {
-    const insight = await getAIProvider().generateInsight(context);
-    if (!contradictsScore(insight, runs, wickets)) return insight;
-  }
-  throw new Error("AI insight contradicted the match score after retry");
+  return generateGuarded(
+    context,
+    (note) => getAIProvider().generateInsight(context, note),
+    (insight) => Object.values(insight).join(" "),
+    (insight) => !contradictsScore(insight, runs, wickets),
+    "AI insight contradicted the match score after retry",
+  );
 }
 
 export async function askQuestion(matchId: string, question: string): Promise<AIAnswer | null> {
   const context = await buildContext(matchId);
   if (!context) return null;
-  for (let attempt = 1; attempt <= INSIGHT_ATTEMPTS; attempt++) {
-    const answer = await getAIProvider().answerQuestion(context, question);
-    if (!inventsCounts(answer, context)) return { answer };
-  }
-  throw new Error("AI answer invented a boundary count after retry");
+  const answer = await generateGuarded(
+    context,
+    (note) => getAIProvider().answerQuestion(context, question, note),
+    (a) => a,
+    (a) => !inventsCounts(a, context),
+    "AI answer invented a boundary count after retry",
+  );
+  return { answer };
 }

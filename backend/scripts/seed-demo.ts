@@ -45,6 +45,7 @@ const INNINGS = [
 ];
 
 async function cleanup() {
+  await orm.DemoSession.where({ matchId: MATCH_ID }).delete();
   await orm.Match.where({ id: MATCH_ID }).delete(); // cascades to teams, players, periods, events, deliveries, wickets, performances, moments
   for (const p of PLAYERS) {
     await orm.TeamPlayer.where({ playerId: p.id }).delete();

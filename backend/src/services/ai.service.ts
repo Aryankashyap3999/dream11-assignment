@@ -3,12 +3,15 @@ import type { AIAnswer, AIContext, AIInsight } from "../dto/ai.dto";
 import { getMatchAnalysis } from "./analysis.service";
 import { generateGuarded } from "./ai.safety";
 import { routeQuestion } from "./ai.question-router";
-import { getMatchById } from "./match.service";
+import { buildLiveContext } from "./ai.context";
+import { getMatchById, visibleEvents } from "./match.service";
 
 async function buildContext(matchId: string): Promise<AIContext | null> {
   const match = await getMatchById(matchId);
   const analysis = match && (await getMatchAnalysis(matchId));
   if (!match || !analysis) return null;
+  const names = new Map(match.players.map((p) => [p.id, p.name]));
+  const { list } = await visibleEvents(matchId); // same replay boundary as the analysis
   return {
     match: {
       name: match.name,
@@ -16,6 +19,7 @@ async function buildContext(matchId: string): Promise<AIContext | null> {
       teams: match.teams.map((t) => ({ id: t.id, name: t.name })),
     },
     analysis,
+    live: buildLiveContext(list, names),
   };
 }
 

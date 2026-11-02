@@ -1,0 +1,67 @@
+# MatchPulse AI evaluation harness (baseline)
+
+> This harness measures the current AI implementation and does not modify production AI behavior.
+
+## Purpose
+
+Give the AI reliability work a measured starting point. Later changes (richer context, deterministic routing, refusals, provider retry, validator/fallback improvements) can be compared against this baseline.
+
+## What is measured
+
+Each execution calls the production provider (`getAIProvider().answerQuestion(context, question)`) with a fixture context. That covers the **prompts + provider + model**.
+
+Not covered: the validator and retry loop in `ai.service.ts`. It builds its context from the database and its validators are not exported, so it cannot be exercised from fixtures without changing production code. In production, an answer that trips `inventsCounts` is retried and then returns a 500; here the raw first answer is scored.
+
+## Fixtures (`fixtures.ts`)
+
+Static `AIContext` literals. No database, no live match, no timers.
+
+| Id | State |
+|---|---|
+| A | Mid chase: India 86/3 after 10.5 overs, 91 required, 55 balls left, RRR 9.93, last six `1,0,1,4,6,1` (13 runs, 1 four, 1 six, 0 wickets) |
+| B | First innings, format unknown: Australia 52/1; `runsRequired`, `ballsRemaining`, `requiredRunRate` all `null` |
+| C | Early innings: Australia 1/0 after one delivery |
+| D | Replay paused at sequence 150: India 33/1 after 4.2 overs, the rest of the chase hidden |
+
+A, C and D mirror what `getMatchAnalysis` returns for the seeded demo match at those positions. `checkFixtures()` aborts the run if fixture A drifts.
+
+## Cases (`cases.ts`)
+
+40 cases = 10 categories x 4: direct factual, recent events, statistical, analytical, momentum, player, unsupported, prediction, incorrect assumptions, prompt injection.
+
+`expectedBehavior` is what a correct system should do: `ANSWER` from the context, `REFUSE` (context cannot support it, or the instruction must not be followed), or `CORRECT_PREMISE`. Where the context lacks the data (e.g. per-player stats) the expected behavior is `REFUSE` on purpose.
+
+## Runs and classification
+
+Every case runs 3 times (120 executions) because LLM output varies. Each execution is exactly one of:
+
+| Status | Meaning |
+|---|---|
+| `SUCCESS` | Answer produced, all assertions passed |
+| `ASSERTION_FAILURE` | Answer produced, at least one assertion failed |
+| `PROVIDER_ERROR` | Provider/HTTP failure (including 429 and 5xx). Never counted as a correctness failure |
+| `TIMEOUT` | Provider or harness (45 s) timeout |
+| `PARSE_ERROR` | Empty or unparseable provider output |
+
+There is no retry in the harness or the provider. `EVAL_DELAY_MS` (default 1500) only spaces calls out.
+
+## Deterministic assertions (`assertions.ts`)
+
+Programmatic checks only: expected numbers present, forbidden claims absent (negation-aware per sentence), refusal wording, premise-correction wording, no numbers outside the context, no prediction wording, no 5-word overlap with the system prompt, no raw JSON/UUID dump. These are lexical: they catch concrete, checkable failures, not semantic correctness, so a pass is not proof of a good answer and a fail can occasionally be a wording false positive. Read the stored answers in the result file before acting on a single failure.
+
+## Why no LLM judge
+
+A judge model is itself non-deterministic and can share the failure modes being measured, which would make the baseline unreliable and unrepeatable. Assertions are cheap, reproducible and auditable.
+
+## Running
+
+```bash
+cd backend
+npm run eval:ai
+```
+
+Needs `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL` (loaded from `.env`). It makes 120 real provider calls. Output: a terminal summary and `evals/results/ai-baseline-<timestamp>.json` (totals, per-category and per-case tallies, failure patterns, every answer). API keys are never printed or written; error text is redacted.
+
+The command exits non-zero only when the harness itself fails (bad suite, missing env, every execution erroring before an answer). Failed assertions do not change the exit code.
+
+Type-check the harness with `npx tsc -p evals` (the root `tsc` only covers `src/`).

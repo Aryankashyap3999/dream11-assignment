@@ -70,10 +70,10 @@ export async function getMatchById(matchId: string): Promise<MatchDetails | null
 
 const norm = (t: string | null) => (t ?? "").toLowerCase().replace(/[^a-z]/g, "");
 
-type ScoreEvent = Awaited<ReturnType<typeof visibleEvents>>["list"][number];
+export type ScoreEvent = Awaited<ReturnType<typeof visibleEvents>>["list"][number];
 
 // Events that have happened so far: all of them, or only up to the replay position.
-async function visibleEvents(matchId: string) {
+export async function visibleEvents(matchId: string) {
   const visible = await visibleSequence(matchId);
   const events = await db.orm.public.MatchEvent.where({ matchId })
     .include("team")
@@ -110,7 +110,7 @@ function teamTotals(events: ScoreEvent[]): TeamTotal[] {
 }
 
 // Replay mode: player stats rebuilt from the visible deliveries instead of the final precomputed rows.
-function replayPlayerStats(events: ScoreEvent[], names: Map<string, string>) {
+export function replayPlayerStats(events: ScoreEvent[], names: Map<string, string>) {
   const name = (id: string) => names.get(id) ?? id;
   const bat = new Map<string, BattingEntry>();
   const bowl = new Map<string, { legal: number; runs: number; wickets: number; maidens: number }>();

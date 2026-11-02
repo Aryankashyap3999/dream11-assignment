@@ -1,22 +1,25 @@
 import { GoogleGenAI } from "@google/genai";
 import type { AIContext, AIInsight } from "../dto/ai.dto";
 import type { AIProvider } from "./ai.provider";
+import { withRetry } from "./retry";
 import { SYSTEM_PROMPT, insightPrompt, questionPrompt } from "./prompts";
 
 export function createGeminiProvider(apiKey: string, model: string): AIProvider {
   const client = new GoogleGenAI({ apiKey });
 
   async function generate(contents: string, json: boolean): Promise<string> {
-    const res = await client.models.generateContent({
-      model,
-      contents,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.4,
-        httpOptions: { timeout: 30_000 }, // fail fast instead of hanging the HTTP request
-        ...(json && { responseMimeType: "application/json" }),
-      },
-    });
+    const res = await withRetry("gemini", (timeoutMs) =>
+      client.models.generateContent({
+        model,
+        contents,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          temperature: 0.4,
+          httpOptions: { timeout: timeoutMs }, // fail fast instead of hanging the HTTP request
+          ...(json && { responseMimeType: "application/json" }),
+        },
+      }),
+    );
     const text = res.text?.trim();
     if (!text) throw new Error("AI provider returned an empty response");
     return text;

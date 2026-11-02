@@ -1,25 +1,29 @@
 import type { AIContext, AIInsight } from "../dto/ai.dto";
 import type { AIProvider } from "./ai.provider";
+import { HttpError, parseRetryAfter, withRetry } from "./retry";
 import { SYSTEM_PROMPT, insightPrompt, questionPrompt } from "./prompts";
 
 // Groq exposes an OpenAI-compatible REST API, so plain fetch is enough (no SDK).
 export function createGroqProvider(apiKey: string, model: string): AIProvider {
   async function generate(prompt: string, json: boolean): Promise<string> {
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
-      signal: AbortSignal.timeout(30_000), // fail fast instead of hanging the HTTP request
-      body: JSON.stringify({
-        model,
-        temperature: 0.4,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: prompt },
-        ],
-        ...(json && { response_format: { type: "json_object" } }),
-      }),
+    const res = await withRetry("groq", async (timeoutMs) => {
+      const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(timeoutMs), // fail fast instead of hanging the HTTP request
+        body: JSON.stringify({
+          model,
+          temperature: 0.4,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: prompt },
+          ],
+          ...(json && { response_format: { type: "json_object" } }),
+        }),
+      });
+      if (!r.ok) throw new HttpError(`Groq request failed with status ${r.status}`, r.status, parseRetryAfter(r.headers.get("retry-after")));
+      return r;
     });
-    if (!res.ok) throw new Error(`Groq request failed with status ${res.status}`);
     const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
     const text = body.choices?.[0]?.message?.content?.trim();
     if (!text) throw new Error("AI provider returned an empty response");

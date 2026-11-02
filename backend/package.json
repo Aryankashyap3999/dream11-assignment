@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --import tsx --test tests/*.test.ts",
     "dev": "tsx watch src/index.ts",
     "db:seed": "tsx scripts/seed-demo.ts",
     "build": "tsc",

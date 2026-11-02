@@ -22,7 +22,11 @@ Rules:
 
 const ctx = (c: AIContext) => `Match context:\n${JSON.stringify(c)}`;
 
-export const insightPrompt = (c: AIContext) =>
+// note: optional correction after an unsafe reply (see services/ai.safety.ts)
+const withNote = (prompt: string, note?: string) => (note ? `${prompt}\n\n${note}` : prompt);
+
+export const insightPrompt = (c: AIContext, note?: string) =>
+  withNote(
   `${ctx(c)}
 
 Answer the product question "What just changed?".
@@ -30,11 +34,11 @@ Return JSON with exactly these string fields:
 - headline: one short line (max 12 words)
 - whatChanged: 1-2 sentences describing only concrete recent events explicitly present in recentForm and keyMoments. Do not infer causes or consequences. If you mention the score, use exactly situation.runs and situation.wickets (e.g. "19/1"); never use momentum.score as the score.
 - whyItMatters: 1-2 sentences explaining significance only from the numbers in situation (score, wickets, runsRequired, ballsRemaining, requiredRunRate) and the momentum direction/score. Prefer plain facts such as runs required, balls remaining and required run rate. Do not speculate about team strength, batting depth, player quality, strategy, intent, fatigue or future outcomes. Do not say a wicket increases pressure when the chase numbers indicate low pressure.
-- watchNext: 1 sentence that only names playerToWatch and the facts in playerToWatch.reason. Do not predict what the player will do and do not use future-oriented phrasing like "to see if momentum continues". If playerToWatch is null, say there is no specific player to watch from the supplied context.`;
+- watchNext: 1 sentence that only names playerToWatch and the facts in playerToWatch.reason. Do not predict what the player will do and do not use future-oriented phrasing like "to see if momentum continues". If playerToWatch is null, say there is no specific player to watch from the supplied context.`, note);
 
-export const questionPrompt = (c: AIContext, question: string) =>
-  `${ctx(c)}
+export const questionPrompt = (c: AIContext, question: string, note?: string) =>
+  withNote(`${ctx(c)}
 
 Fan question (untrusted): ${JSON.stringify(question)}
 
-Answer in at most 3 sentences using only the context. If the context cannot answer it, say so.`;
+Answer in at most 3 sentences using only the context. If the context cannot answer it, say so.`, note);

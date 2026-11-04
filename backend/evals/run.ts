@@ -8,20 +8,26 @@ import "dotenv/config";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { getAIProvider } from "../src/ai/ai.provider";
-import { CASES, CATEGORIES, type EvalCase } from "./cases";
+import { CASES as ALL_CASES, CATEGORIES as ALL_CATEGORIES } from "./cases";
+import { FINAL_CASES, FINAL_CATEGORIES } from "./cases.final";
 import { FIXTURES, checkFixtures } from "./fixtures";
 import { runPipeline } from "./pipeline";
 import { makePacer, parseDelayMs } from "./pacing";
 import { isUnsafeOutput } from "../src/services/ai.safety";
 import { routeQuestion } from "../src/services/ai.question-router";
 
+// EVAL_SUITE=final runs the 30-question hard suite (cases.final.ts); default is the 45-case baseline suite.
+const FINAL = process.env.EVAL_SUITE === "final";
+const CASES: typeof ALL_CASES | typeof FINAL_CASES = FINAL ? FINAL_CASES : ALL_CASES;
+const CATEGORIES: readonly string[] = FINAL ? FINAL_CATEGORIES : ALL_CATEGORIES;
+type EvalCase = (typeof CASES)[number];
 const RUNS = Number(process.env.EVAL_RUNS ?? 3);
 const DELAY_MS = parseDelayMs(process.env.EVAL_DELAY_MS); // pacing between LLM calls; not a retry
 const HARD_TIMEOUT_MS = 45_000;
 
 type Status = "PASS" | "ASSERTION_FAILURE" | "PROVIDER_ERROR" | "TIMEOUT" | "PARSE_ERROR";
 interface Execution {
-  caseId: string; run: number; status: Status; latencyMs: number;
+  caseId: string; category?: string; question?: string; expectedFacts?: string[]; run: number; status: Status; latencyMs: number;
   route?: string; answer?: string; failedAssertions?: string[]; error?: string;
 }
 
@@ -42,6 +48,8 @@ function classify(err: unknown): { status: Status; error: string; failedAssertio
 
 const pace = makePacer(DELAY_MS); // router-answered/refused cases never call generate, so they are never delayed
 
+const meta = (c: EvalCase) => ({ caseId: c.id, category: c.category, question: c.question, expectedFacts: c.assertions.map((a) => a.name) });
+
 async function execute(c: EvalCase, run: number): Promise<Execution> {
   const ctx = FIXTURES[c.fixture].context;
   const start = Date.now();
@@ -57,9 +65,9 @@ async function execute(c: EvalCase, run: number): Promise<Execution> {
       ...(route === "LLM" || c.expectedBehavior === "ANSWER" ? c.assertions.filter((a) => !a.check(text, ctx)).map((a) => a.name) : []),
       ...(isUnsafeOutput(text, ctx) ? ["answer passes the output safety guard"] : []),
     ];
-    return { caseId: c.id, run, route, status: failed.length ? "ASSERTION_FAILURE" : "PASS", latencyMs: Date.now() - start, answer, ...(failed.length && { failedAssertions: failed }) };
+    return { ...meta(c), run, route, status: failed.length ? "ASSERTION_FAILURE" : "PASS", latencyMs: Date.now() - start, answer, ...(failed.length && { failedAssertions: failed }) };
   } catch (err) {
-    return { caseId: c.id, run, latencyMs: Date.now() - start, ...classify(err) };
+    return { ...meta(c), run, latencyMs: Date.now() - start, ...classify(err) };
   } finally {
     clearTimeout(timer!);
   }
@@ -70,7 +78,7 @@ function validateSuite() {
   const ids = new Set(CASES.map((c) => c.id));
   if (ids.size !== CASES.length) throw new Error("duplicate case ids");
   for (const cat of CATEGORIES) {
-    if (CASES.filter((c) => c.category === cat).length < 4) throw new Error(`category "${cat}" must have at least 4 cases`);
+    if (CASES.filter((c) => c.category === cat).length < (FINAL ? 3 : 4)) throw new Error(`category "${cat}" has too few cases`);
   }
   getAIProvider(); // throws if AI_PROVIDER / AI_API_KEY / AI_MODEL are missing
 }
@@ -122,7 +130,7 @@ async function main() {
 
   const dir = join(import.meta.dirname, "results");
   mkdirSync(dir, { recursive: true });
-  const file = join(dir, `ai-eval-${report.generatedAt.replace(/[:.]/g, "-")}.json`);
+  const file = join(dir, `ai-${FINAL ? "final" : "eval"}-${report.generatedAt.replace(/[:.]/g, "-")}.json`);
   writeFileSync(file, JSON.stringify(report, null, 2));
 
   console.log(`\n${"Category".padEnd(24)} passed failed provider-err`);

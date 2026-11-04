@@ -1,0 +1,701 @@
+{
+  "generatedAt": "2026-11-02T20:18:41.378Z",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "measuredLayer": "router + output safety guard + provider retry + prompts + model (inventsCounts not exercised)",
+  "totalCases": 30,
+  "llmRunsPerCase": 1,
+  "llmCalls": 30,
+  "routes": {
+    "DETERMINISTIC": 0,
+    "UNSUPPORTED": 0,
+    "LLM": 2
+  },
+  "totalExecutions": 30,
+  "passes": 1,
+  "assertionFailures": 1,
+  "providerErrors": 28,
+  "timeouts": 0,
+  "parseErrors": 0,
+  "categories": {
+    "Statistical reasoning": {
+      "executions": 5,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 4,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Momentum": {
+      "executions": 3,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 3,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Player analysis": {
+      "executions": 4,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 3,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Causal": {
+      "executions": 3,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 3,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Live context": {
+      "executions": 3,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 3,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Recent-ball interpretation": {
+      "executions": 4,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 4,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Pressure/situation": {
+      "executions": 3,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 3,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Premise correction": {
+      "executions": 5,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 5,
+      "timeouts": 0,
+      "parseErrors": 0
+    }
+  },
+  "perCase": [
+    {
+      "id": "f-stat-01",
+      "category": "Statistical reasoning",
+      "fixture": "A",
+      "question": "Explain how far India's scoring pace so far is from the rate they now need.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-02",
+      "category": "Statistical reasoning",
+      "fixture": "A",
+      "question": "Aarav Sharma has 4 fours and 2 sixes in his 41. Explain how many of his runs came from boundaries and how many from elsewhere.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-03",
+      "category": "Statistical reasoning",
+      "fixture": "A",
+      "question": "Explain what share of India's most recent 13 runs came off the four and the six together.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-04",
+      "category": "Statistical reasoning",
+      "fixture": "E",
+      "question": "Explain what the current bowler's economy rate is and what it says about his spell.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-05",
+      "category": "Statistical reasoning",
+      "fixture": "D",
+      "question": "Explain what India need per over from here, compared with how they have scored so far.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-mom-01",
+      "category": "Momentum",
+      "fixture": "A",
+      "question": "Does a momentum score of 28 mean India are favourites? Explain.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-mom-02",
+      "category": "Momentum",
+      "fixture": "E",
+      "question": "Explain what the momentum score is after the wicket and who it favours.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-mom-03",
+      "category": "Momentum",
+      "fixture": "B",
+      "question": "Australia's momentum is -12 here. Does that mean they are collapsing?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-01",
+      "category": "Player analysis",
+      "fixture": "A",
+      "question": "What is Aarav Sharma's strike rate in this innings?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-02",
+      "category": "Player analysis",
+      "fixture": "A",
+      "question": "Liam Carter took a wicket. Has he also been expensive?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-03",
+      "category": "Player analysis",
+      "fixture": "E",
+      "question": "Kabir Nair got out. Who dismissed him and how many balls had he faced?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-04",
+      "category": "Player analysis",
+      "fixture": "A",
+      "question": "Which side does the batter on strike play for, and who is bowling to him?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-cause-01",
+      "category": "Causal",
+      "fixture": "D",
+      "question": "Explain why momentum is positive here even though India still need a lot.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-cause-02",
+      "category": "Causal",
+      "fixture": "A",
+      "question": "Explain what is driving India's required run rate up to this level.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-cause-03",
+      "category": "Causal",
+      "fixture": "E",
+      "question": "Explain why the situation is hard for India after that wicket.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-live-01",
+      "category": "Live context",
+      "fixture": "E",
+      "question": "Describe the latest ball in full detail.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-live-02",
+      "category": "Live context",
+      "fixture": "D",
+      "question": "Who is bowling right now and how has he gone so far?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-live-03",
+      "category": "Live context",
+      "fixture": "C",
+      "question": "Explain what has happened in this match so far.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-01",
+      "category": "Recent-ball interpretation",
+      "fixture": "A",
+      "question": "Explain what the sequence of recent deliveries says about how India are scoring.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-02",
+      "category": "Recent-ball interpretation",
+      "fixture": "E",
+      "question": "Summarize the recent six deliveries and tell me what the final ball was.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-03",
+      "category": "Recent-ball interpretation",
+      "fixture": "D",
+      "question": "Did the six come before or after India's wicket? Explain using the key moments.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-04",
+      "category": "Recent-ball interpretation",
+      "fixture": "B",
+      "question": "Explain how many dot balls there were in Australia's recent six deliveries.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-press-01",
+      "category": "Pressure/situation",
+      "fixture": "A",
+      "question": "Explain how much pressure India are under, given the asking rate and balls left.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-press-02",
+      "category": "Pressure/situation",
+      "fixture": "D",
+      "question": "Explain the situation: how many wickets does India have in hand and what is the asking rate?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-press-03",
+      "category": "Pressure/situation",
+      "fixture": "B",
+      "question": "What is the situation for Australia given the target they are chasing?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-01",
+      "category": "Premise correction",
+      "fixture": "A",
+      "question": "Why did India's required rate drop below 8 after the six?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-02",
+      "category": "Premise correction",
+      "fixture": "E",
+      "question": "Why did Aarav Sharma get out?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-03",
+      "category": "Premise correction",
+      "fixture": "A",
+      "question": "Explain why Liam Carter conceded 24 runs in his 3 overs.",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-04",
+      "category": "Premise correction",
+      "fixture": "C",
+      "question": "Why did Australia lose a wicket so early in the innings?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-05",
+      "category": "Premise correction",
+      "fixture": "D",
+      "question": "Why did India hit three sixes in the last few overs?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 0,
+      "providerErrors": 1,
+      "timeouts": 0,
+      "parseErrors": 0
+    }
+  ],
+  "failurePatterns": [
+    {
+      "pattern": "f-play-03: states 14 runs",
+      "count": 1
+    }
+  ],
+  "executions": [
+    {
+      "caseId": "f-stat-01",
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 1073,
+      "answer": "India have scored 86 runs from 65 balls, while they now need 91 runs from the remaining 55 balls at a required run rate of 9.93 runs per over. Their current scoring (86 off 65) is slower than the required 9.93 RPO."
+    },
+    {
+      "caseId": "f-stat-02",
+      "run": 1,
+      "latencyMs": 18822,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-stat-03",
+      "run": 1,
+      "latencyMs": 18439,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-stat-04",
+      "run": 1,
+      "latencyMs": 18545,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-stat-05",
+      "run": 1,
+      "latencyMs": 20044,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-mom-01",
+      "run": 1,
+      "latencyMs": 18634,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-mom-02",
+      "run": 1,
+      "latencyMs": 18741,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-mom-03",
+      "run": 1,
+      "latencyMs": 19149,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-play-01",
+      "run": 1,
+      "latencyMs": 18635,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-play-02",
+      "run": 1,
+      "latencyMs": 18433,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-play-03",
+      "run": 1,
+      "route": "LLM",
+      "status": "ASSERTION_FAILURE",
+      "latencyMs": 9025,
+      "answer": "Kabir Nair was dismissed by bowler Jack Holloway, caught by fielder Oscar Hayes. He had faced 11 balls before getting out.",
+      "failedAssertions": [
+        "states 14 runs"
+      ]
+    },
+    {
+      "caseId": "f-play-04",
+      "run": 1,
+      "latencyMs": 18835,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-cause-01",
+      "run": 1,
+      "latencyMs": 18842,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-cause-02",
+      "run": 1,
+      "latencyMs": 18837,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-cause-03",
+      "run": 1,
+      "latencyMs": 19394,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-live-01",
+      "run": 1,
+      "latencyMs": 18839,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-live-02",
+      "run": 1,
+      "latencyMs": 18610,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-live-03",
+      "run": 1,
+      "latencyMs": 18634,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-ball-01",
+      "run": 1,
+      "latencyMs": 18408,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-ball-02",
+      "run": 1,
+      "latencyMs": 19474,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-ball-03",
+      "run": 1,
+      "latencyMs": 18959,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-ball-04",
+      "run": 1,
+      "latencyMs": 18577,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-press-01",
+      "run": 1,
+      "latencyMs": 18595,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-press-02",
+      "run": 1,
+      "latencyMs": 18495,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-press-03",
+      "run": 1,
+      "latencyMs": 18702,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-prem-01",
+      "run": 1,
+      "latencyMs": 18669,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-prem-02",
+      "run": 1,
+      "latencyMs": 18334,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-prem-03",
+      "run": 1,
+      "latencyMs": 18407,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-prem-04",
+      "run": 1,
+      "latencyMs": 18427,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    },
+    {
+      "caseId": "f-prem-05",
+      "run": 1,
+      "latencyMs": 18443,
+      "status": "PROVIDER_ERROR",
+      "error": "Groq request failed with status 429"
+    }
+  ]
+}

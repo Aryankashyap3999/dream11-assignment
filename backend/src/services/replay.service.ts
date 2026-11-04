@@ -69,6 +69,7 @@ export async function getReplayState(matchId: string): Promise<ReplayState | nul
 async function advance(matchId: string): Promise<ReplayState> {
   const s = await getOrCreate(matchId);
   const seqs = await deliverySequences(matchId);
+  if (!timers.has(matchId)) return toState(matchId, "PAUSED", Number(s.currentSequence), seqs); // paused or reset while this tick was loading
   const next = seqs.find((n) => n > Number(s.currentSequence));
   const current = next ?? Number(s.currentSequence);
   const done = next === undefined || next === seqs.at(-1);

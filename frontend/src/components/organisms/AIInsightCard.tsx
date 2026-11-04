@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react'
 import { useMatchInsights } from '../../hooks/apis/ai'
+import { apiErrorMessage } from '../../utils/errors'
 import Card from '../atoms/Card'
 
 const Block = ({ label, text }: { label: string; text: string }) => (
@@ -10,14 +11,14 @@ const Block = ({ label, text }: { label: string; text: string }) => (
 )
 
 export default function AIInsightCard({ matchId }: { matchId: string }) {
-  const { data, isLoading, isError, refetch } = useMatchInsights(matchId)
+  const { data, isLoading, isError, error, refetch } = useMatchInsights(matchId)
 
   return (
     <Card
       className="border-emerald-500/30"
       isLoading={isLoading}
       isError={isError}
-      errorText="AI insights are unavailable right now."
+      errorText={apiErrorMessage(error, 'AI insights are unavailable right now.')}
     >
       <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
         <Sparkles size={14} className="text-emerald-400" /> What just changed?

@@ -5,7 +5,11 @@ import apiRouter from "./routes/index";
 
 const app = express();
 
-app.use(cors());
+app.set("trust proxy", 1); // behind one reverse proxy (Render/Railway), so req.ip is the client for rate limiting
+
+// FRONTEND_ORIGIN: comma-separated allowed origins. Unset = any origin (local development).
+const origins = process.env.FRONTEND_ORIGIN?.split(",").map((o) => o.trim().replace(/\/$/, "")).filter(Boolean);
+app.use(cors({ origin: origins?.length ? origins : true }));
 app.use(express.json());
 
 app.get("/health", (_req, res) => {

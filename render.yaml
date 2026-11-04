@@ -1,0 +1,33 @@
+# Render Blueprint: backend web service + managed PostgreSQL. Deploy: Render dashboard -> New -> Blueprint -> this repo.
+# Frontend is deployed separately on Vercel (see frontend/vercel.json and README.md).
+databases:
+  - name: matchpulse-db
+    databaseName: matchpulse
+    plan: free
+
+services:
+  - type: web
+    name: matchpulse-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    healthCheckPath: /health
+    # prisma and typescript are devDependencies: both are needed (build, and schema setup at start).
+    buildCommand: npm ci --include=dev && npm run build
+    # db init and db:seed are idempotent. The seed recreates the demo match, which also resets its replay.
+    startCommand: npx prisma db init && npm run db:seed && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: DATABASE_URL
+        fromDatabase:
+          name: matchpulse-db
+          property: connectionString
+      - key: AI_PROVIDER
+        value: groq
+      - key: AI_MODEL
+        value: openai/gpt-oss-120b
+      - key: AI_API_KEY
+        sync: false # set in the Render dashboard
+      - key: FRONTEND_ORIGIN
+        sync: false # the Vercel URL, e.g. https://matchpulse.vercel.app (no trailing path)

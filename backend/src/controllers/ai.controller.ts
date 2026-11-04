@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { isProviderUnavailable } from "../ai/retry";
 import * as aiService from "../services/ai.service";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -6,7 +7,12 @@ const MAX_QUESTION = 500;
 
 function serverError(res: Response, error: unknown) {
   // message only: never log objects that might carry request config
-  console.error(error instanceof Error ? error.message : "AI request failed");
+  const message = error instanceof Error ? error.message : "AI request failed";
+  if (isProviderUnavailable(error)) {
+    console.warn(`[ai] provider unavailable: ${message}`);
+    return res.status(503).json({ message: "MatchPulse AI is busy right now. Please try again in a minute." });
+  }
+  console.error(message);
   res.status(500).json({ message: "Internal server error" });
 }
 

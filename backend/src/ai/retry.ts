@@ -31,6 +31,15 @@ function isTransient(err: unknown): boolean {
   return s === undefined || RETRYABLE.has(s);
 }
 
+// Provider outage / quota (retryable status, timeout or network failure): lets controllers answer 503 instead of 500.
+// Stricter than isTransient: an error with no status counts only if it looks like a timeout or network failure.
+export function isProviderUnavailable(err: unknown): boolean {
+  const s = status(err);
+  if (s !== undefined) return RETRYABLE.has(s);
+  const name = (err as Error)?.name;
+  return name === "TimeoutError" || name === "AbortError" || (err instanceof TypeError && /fetch failed/i.test(err.message));
+}
+
 function reason(err: unknown): string {
   return status(err)?.toString() ?? ((err as Error)?.name === "TimeoutError" ? "timeout" : "network");
 }

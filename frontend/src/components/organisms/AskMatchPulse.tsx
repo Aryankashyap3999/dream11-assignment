@@ -1,6 +1,7 @@
 import { Send } from 'lucide-react'
 import { useState } from 'react'
 import { useAskMatchPulse } from '../../hooks/apis/ai'
+import { apiErrorMessage } from '../../utils/errors'
 import Card from '../atoms/Card'
 
 const SUGGESTIONS = ['What just changed?', 'Why is momentum positive?', 'Who should I watch?']
@@ -52,7 +53,9 @@ export default function AskMatchPulse({ matchId }: { matchId: string }) {
       </form>
       <div className="mt-4 text-sm">
         {ask.isPending && <p className="text-zinc-500">Thinking…</p>}
-        {ask.isError && <p className="text-zinc-500">MatchPulse couldn't answer right now. Please try again.</p>}
+        {ask.isError && (
+          <p className="text-zinc-500">{apiErrorMessage(ask.error, "MatchPulse couldn't answer right now. Please try again.")}</p>
+        )}
         {ask.data && <p className="text-zinc-300">{ask.data.answer}</p>}
       </div>
     </Card>

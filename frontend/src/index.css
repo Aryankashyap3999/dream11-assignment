@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+html {
+  color-scheme: dark;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  @apply outline-2 outline-offset-2 outline-emerald-400;
+}
+
 body {
   @apply bg-zinc-950 text-zinc-100 antialiased;
 }

@@ -93,7 +93,7 @@ Errors: 400 invalid id or body, 404 unknown match, 409 replay conflict, 429 rate
 
 Open the seeded match and use the replay controls. Reset goes to the first delivery, Start advances one delivery every 2 seconds, Pause freezes the position. Score, scorecard, analysis and AI answers all follow the current position. With no replay session (fresh seed) the whole innings is visible: India 86/3, needing 91 off 55.
 
-Note: the AI insight card is fetched once when the page loads and is not refreshed as the replay moves. Reload the page (or ask a question) to get an insight for the current position. The frontend does not poll insights, so there are no repeated insight requests and no server-side insight cache.
+Note: the AI insight card is fetched once when the page loads and is not refreshed automatically as the replay moves (each insight is an LLM call). Use its Refresh button to generate one for the current position. The frontend does not poll insights, so there are no repeated insight requests and no server-side insight cache.
 
 ## AI provider configuration
 
@@ -167,6 +167,6 @@ Render's free web service sleeps when idle, so the first request after a pause i
 ## Known limitations
 
 - Provider quota: bursts of questions can return 503 on Groq's free limits.
-- The insight card does not refresh while the replay moves (see Demo / replay).
+- The insight card refreshes only on page load or via its Refresh button, not while the replay moves (see Demo / replay).
 - Replay timers live in the server process: single instance only.
 - The question router is keyword based; the safety and validation checks are narrow patterns, not a general hallucination detector.

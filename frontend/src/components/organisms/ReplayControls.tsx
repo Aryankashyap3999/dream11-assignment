@@ -1,9 +1,12 @@
 import Card from '../atoms/Card'
+import { useMatchAnalysis } from '../../hooks/apis/analysis'
 import { useReplay, useReplayAction } from '../../hooks/apis/demo'
+import { oversFromBalls } from '../../utils/format'
 
 export default function ReplayControls({ matchId }: { matchId: string }) {
   const { data } = useReplay(matchId)
   const { mutate, isPending } = useReplayAction(matchId)
+  const balls = useMatchAnalysis(matchId).data?.situation.balls
   const buttons = [
     { action: 'start', label: 'Start', disabled: data?.status === 'RUNNING' || data?.status === 'COMPLETED' },
     { action: 'pause', label: 'Pause', disabled: data?.status !== 'RUNNING' },
@@ -25,7 +28,7 @@ export default function ReplayControls({ matchId }: { matchId: string }) {
         ))}
         <span className="ml-auto text-xs text-zinc-500">
           {data?.status ?? '…'}
-          {data?.currentSequence != null && ` · ball #${data.currentSequence}`}
+          {data?.currentSequence != null && balls != null && ` · ${oversFromBalls(balls)} overs`}
         </span>
       </div>
     </Card>

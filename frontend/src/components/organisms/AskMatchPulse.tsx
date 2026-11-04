@@ -20,11 +20,12 @@ export default function AskMatchPulse({ matchId }: { matchId: string }) {
         {SUGGESTIONS.map((s) => (
           <button
             key={s}
+            disabled={ask.isPending}
             onClick={() => {
               setQuestion(s)
               submit(s)
             }}
-            className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-400 hover:border-emerald-500 hover:text-emerald-400"
+            className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-400 hover:border-emerald-500 hover:text-emerald-400 disabled:opacity-40"
           >
             {s}
           </button>
@@ -41,6 +42,7 @@ export default function AskMatchPulse({ matchId }: { matchId: string }) {
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           maxLength={500}
+          aria-label="Ask a question about this match"
           placeholder="Why is the chasing team not under heavy pressure?"
           className="min-w-0 flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm outline-none focus:border-emerald-500"
         />
@@ -51,7 +53,7 @@ export default function AskMatchPulse({ matchId }: { matchId: string }) {
           <Send size={14} /> Ask
         </button>
       </form>
-      <div className="mt-4 text-sm">
+      <div className="mt-4 text-sm" aria-live="polite">
         {ask.isPending && <p className="text-zinc-500">Thinking…</p>}
         {ask.isError && (
           <p className="text-zinc-500">{apiErrorMessage(ask.error, "MatchPulse couldn't answer right now. Please try again.")}</p>

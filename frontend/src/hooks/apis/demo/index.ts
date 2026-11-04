@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getReplay, postReplay, type ReplayAction } from '../../../apis/demo'
 
@@ -13,7 +13,12 @@ export const useReplay = (id: string) => {
     refetchInterval: (q) => (q.state.data?.status === 'RUNNING' ? POLL_MS : false),
   })
   const position = query.data?.currentSequence
+  const last = useRef<number | null | undefined>(undefined)
   useEffect(() => {
+    // The first value is just the initial load (those queries are already fetching): only react to later moves.
+    const moved = last.current !== undefined && last.current !== position
+    last.current = position
+    if (!moved) return
     qc.invalidateQueries({ queryKey: ['analysis', id] })
     qc.invalidateQueries({ queryKey: ['scorecard', id] })
   }, [qc, id, position])

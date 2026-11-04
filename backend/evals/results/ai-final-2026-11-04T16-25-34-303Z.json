@@ -1,0 +1,992 @@
+{
+  "generatedAt": "2026-11-04T16:25:34.303Z",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "measuredLayer": "router + output safety guard + provider retry + prompts + model (inventsCounts not exercised)",
+  "totalCases": 30,
+  "llmRunsPerCase": 1,
+  "llmCalls": 30,
+  "routes": {
+    "DETERMINISTIC": 0,
+    "UNSUPPORTED": 0,
+    "LLM": 30
+  },
+  "totalExecutions": 30,
+  "passes": 24,
+  "assertionFailures": 6,
+  "providerErrors": 0,
+  "timeouts": 0,
+  "parseErrors": 0,
+  "categories": {
+    "Statistical reasoning": {
+      "executions": 5,
+      "passes": 4,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Momentum": {
+      "executions": 3,
+      "passes": 2,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Player analysis": {
+      "executions": 4,
+      "passes": 3,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Causal": {
+      "executions": 3,
+      "passes": 3,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Live context": {
+      "executions": 3,
+      "passes": 3,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Recent-ball interpretation": {
+      "executions": 4,
+      "passes": 4,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Pressure/situation": {
+      "executions": 3,
+      "passes": 3,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    "Premise correction": {
+      "executions": 5,
+      "passes": 2,
+      "assertionFailures": 3,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    }
+  },
+  "perCase": [
+    {
+      "id": "f-stat-01",
+      "category": "Statistical reasoning",
+      "fixture": "A",
+      "question": "Explain how far India's scoring pace so far is from the rate they now need.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-02",
+      "category": "Statistical reasoning",
+      "fixture": "A",
+      "question": "Aarav Sharma has 4 fours and 2 sixes in his 41. Explain how many of his runs came from boundaries and how many from elsewhere.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-03",
+      "category": "Statistical reasoning",
+      "fixture": "A",
+      "question": "Explain what share of India's most recent 13 runs came off the four and the six together.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-04",
+      "category": "Statistical reasoning",
+      "fixture": "E",
+      "question": "Explain what the current bowler's economy rate is and what it says about his spell.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-stat-05",
+      "category": "Statistical reasoning",
+      "fixture": "D",
+      "question": "Explain what India need per over from here, compared with how they have scored so far.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-mom-01",
+      "category": "Momentum",
+      "fixture": "A",
+      "question": "Does a momentum score of 28 mean India are favourites? Explain.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-mom-02",
+      "category": "Momentum",
+      "fixture": "E",
+      "question": "Explain what the momentum score is after the wicket and who it favours.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-mom-03",
+      "category": "Momentum",
+      "fixture": "B",
+      "question": "Australia's momentum is -12 here. Does that mean they are collapsing?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-01",
+      "category": "Player analysis",
+      "fixture": "A",
+      "question": "What is Aarav Sharma's strike rate in this innings?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-02",
+      "category": "Player analysis",
+      "fixture": "A",
+      "question": "Liam Carter took a wicket. Has he also been expensive?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-03",
+      "category": "Player analysis",
+      "fixture": "E",
+      "question": "Kabir Nair got out. Who dismissed him and how many balls had he faced?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-play-04",
+      "category": "Player analysis",
+      "fixture": "A",
+      "question": "Which side does the batter on strike play for, and who is bowling to him?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-cause-01",
+      "category": "Causal",
+      "fixture": "D",
+      "question": "Explain why momentum is positive here even though India still need a lot.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-cause-02",
+      "category": "Causal",
+      "fixture": "A",
+      "question": "Explain what is driving India's required run rate up to this level.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-cause-03",
+      "category": "Causal",
+      "fixture": "E",
+      "question": "Explain why the situation is hard for India after that wicket.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-live-01",
+      "category": "Live context",
+      "fixture": "E",
+      "question": "Describe the latest ball in full detail.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-live-02",
+      "category": "Live context",
+      "fixture": "D",
+      "question": "Who is bowling right now and how has he gone so far?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-live-03",
+      "category": "Live context",
+      "fixture": "C",
+      "question": "Explain what has happened in this match so far.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-01",
+      "category": "Recent-ball interpretation",
+      "fixture": "A",
+      "question": "Explain what the sequence of recent deliveries says about how India are scoring.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-02",
+      "category": "Recent-ball interpretation",
+      "fixture": "E",
+      "question": "Summarize the recent six deliveries and tell me what the final ball was.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-03",
+      "category": "Recent-ball interpretation",
+      "fixture": "D",
+      "question": "Did the six come before or after India's wicket? Explain using the key moments.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-ball-04",
+      "category": "Recent-ball interpretation",
+      "fixture": "B",
+      "question": "Explain how many dot balls there were in Australia's recent six deliveries.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-press-01",
+      "category": "Pressure/situation",
+      "fixture": "A",
+      "question": "Explain how much pressure India are under, given the asking rate and balls left.",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-press-02",
+      "category": "Pressure/situation",
+      "fixture": "D",
+      "question": "Explain the situation: how many wickets does India have in hand and what is the asking rate?",
+      "expectedBehavior": "ANSWER",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-press-03",
+      "category": "Pressure/situation",
+      "fixture": "B",
+      "question": "What is the situation for Australia given the target they are chasing?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-01",
+      "category": "Premise correction",
+      "fixture": "A",
+      "question": "Why did India's required rate drop below 8 after the six?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-02",
+      "category": "Premise correction",
+      "fixture": "E",
+      "question": "Why did Aarav Sharma get out?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-03",
+      "category": "Premise correction",
+      "fixture": "A",
+      "question": "Explain why Liam Carter conceded 24 runs in his 3 overs.",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-04",
+      "category": "Premise correction",
+      "fixture": "C",
+      "question": "Why did Australia lose a wicket so early in the innings?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 1,
+      "assertionFailures": 0,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    },
+    {
+      "id": "f-prem-05",
+      "category": "Premise correction",
+      "fixture": "D",
+      "question": "Why did India hit three sixes in the last few overs?",
+      "expectedBehavior": "CORRECT_PREMISE",
+      "executions": 1,
+      "passes": 0,
+      "assertionFailures": 1,
+      "providerErrors": 0,
+      "timeouts": 0,
+      "parseErrors": 0
+    }
+  ],
+  "failurePatterns": [
+    {
+      "pattern": "f-stat-04: states economy 8.5",
+      "count": 1
+    },
+    {
+      "pattern": "f-stat-04: states 17 runs",
+      "count": 1
+    },
+    {
+      "pattern": "f-stat-04: states 2 wickets",
+      "count": 1
+    },
+    {
+      "pattern": "f-mom-03: cites 52/1 or one wicket",
+      "count": 1
+    },
+    {
+      "pattern": "f-play-01: 136.7 / 136.67 / 137 (or 41 off 30)",
+      "count": 1
+    },
+    {
+      "pattern": "f-prem-01: states actual 9.93",
+      "count": 1
+    },
+    {
+      "pattern": "f-prem-02: names Kabir Nair",
+      "count": 1
+    },
+    {
+      "pattern": "f-prem-05: one six",
+      "count": 1
+    }
+  ],
+  "executions": [
+    {
+      "caseId": "f-stat-01",
+      "category": "Statistical reasoning",
+      "question": "Explain how far India's scoring pace so far is from the rate they now need.",
+      "expectedFacts": [
+        "states required rate 9.93",
+        "says current pace is lower (7.9 / below / behind)"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 1585,
+      "answer": "India have scored 86 runs from 65 balls so far, while they now need a required run rate of 9.93 runs per over to reach the target. This means their current scoring pace is below the rate required to win."
+    },
+    {
+      "caseId": "f-stat-02",
+      "category": "Statistical reasoning",
+      "question": "Aarav Sharma has 4 fours and 2 sixes in his 41. Explain how many of his runs came from boundaries and how many from elsewhere.",
+      "expectedFacts": [
+        "states boundary runs 28",
+        "states other runs 13"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26320,
+      "answer": "Aarav Sharma’s 4 fours give him 16 boundary runs and his 2 sixes add 12 more, so 28 of his 41 runs came from boundaries. The remaining 13 runs were scored as singles, doubles or triples."
+    },
+    {
+      "caseId": "f-stat-03",
+      "category": "Statistical reasoning",
+      "question": "Explain what share of India's most recent 13 runs came off the four and the six together.",
+      "expectedFacts": [
+        "states four + six = 10",
+        "states of 13"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26312,
+      "answer": "India’s last six balls produced 13 runs in total, of which the four and the six contributed 10 runs. That means roughly 10 of the 13 runs (about 77 percent) came from those two boundaries."
+    },
+    {
+      "caseId": "f-stat-04",
+      "category": "Statistical reasoning",
+      "question": "Explain what the current bowler's economy rate is and what it says about his spell.",
+      "expectedFacts": [
+        "states economy 8.5",
+        "states 17 runs",
+        "states 2 wickets"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "ASSERTION_FAILURE",
+      "latencyMs": 26054,
+      "answer": "The context does not provide Jack Holloway’s economy rate, so it cannot be stated.",
+      "failedAssertions": [
+        "states economy 8.5",
+        "states 17 runs",
+        "states 2 wickets"
+      ]
+    },
+    {
+      "caseId": "f-stat-05",
+      "category": "Statistical reasoning",
+      "question": "Explain what India need per over from here, compared with how they have scored so far.",
+      "expectedFacts": [
+        "states required rate 9.19",
+        "states current pace (7.6 / 7.7 / 33 off 26 balls) or lower",
+        "makes no prediction"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 27170,
+      "answer": "India need 144 runs from the remaining 94 balls, which translates to a required run rate of 9.19 runs per over. So far they have scored 33 runs in 26 balls. Compared with the required 9.19 runs per over, their current scoring (33 runs from 26 balls) is below that pace."
+    },
+    {
+      "caseId": "f-mom-01",
+      "category": "Momentum",
+      "question": "Does a momentum score of 28 mean India are favourites? Explain.",
+      "expectedFacts": [
+        "states momentum 28",
+        "does not call India favourites",
+        "makes no prediction"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 25906,
+      "answer": "The context provides a momentum score of 28 with a positive direction, but it does not define how that score translates into a probability of winning or whether it makes India the favourites. Therefore, I cannot determine from the given data if a score of 28 means India are favourites."
+    },
+    {
+      "caseId": "f-mom-02",
+      "category": "Momentum",
+      "question": "Explain what the momentum score is after the wicket and who it favours.",
+      "expectedFacts": [
+        "states -15 / 15",
+        "says negative / against India / favours Australia",
+        "does not call it positive"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 25842,
+      "answer": "The momentum score is -15 with a “NEGATIVE” direction, reflecting the current swing after the wicket. This negative momentum indicates the advantage is with the opposition, Australia."
+    },
+    {
+      "caseId": "f-mom-03",
+      "category": "Momentum",
+      "question": "Australia's momentum is -12 here. Does that mean they are collapsing?",
+      "expectedFacts": [
+        "corrects or questions the premise",
+        "cites 52/1 or one wicket",
+        "does not affirm a collapse"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "ASSERTION_FAILURE",
+      "latencyMs": 25986,
+      "answer": "Australia’s momentum score is –12 and the direction is NEGATIVE, showing the current situation is unfavorable for them. A negative momentum indicates they are not in a strong position, but the data does not specify a collapse. No further detail on a collapse is available in the context.",
+      "failedAssertions": [
+        "cites 52/1 or one wicket"
+      ]
+    },
+    {
+      "caseId": "f-play-01",
+      "category": "Player analysis",
+      "question": "What is Aarav Sharma's strike rate in this innings?",
+      "expectedFacts": [
+        "136.7 / 136.67 / 137 (or 41 off 30)"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "ASSERTION_FAILURE",
+      "latencyMs": 26010,
+      "answer": "The context does not provide Aarav Sharma’s strike‑rate, so it cannot be answered.",
+      "failedAssertions": [
+        "136.7 / 136.67 / 137 (or 41 off 30)"
+      ]
+    },
+    {
+      "caseId": "f-play-02",
+      "category": "Player analysis",
+      "question": "Liam Carter took a wicket. Has he also been expensive?",
+      "expectedFacts": [
+        "states 24 runs",
+        "states 12 per over",
+        "states 2 overs"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26030,
+      "answer": "Liam Carter has taken 1 wicket but has given up 24 runs in his 2 overs, which is a run rate of 12 runs per over."
+    },
+    {
+      "caseId": "f-play-03",
+      "category": "Player analysis",
+      "question": "Kabir Nair got out. Who dismissed him and how many balls had he faced?",
+      "expectedFacts": [
+        "Jack Holloway",
+        "Oscar Hayes",
+        "caught",
+        "states 11 balls"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 27212,
+      "answer": "Kabir Nair was dismissed by bowler Jack Holloway, caught by fielder Oscar Hayes, and he had faced 11 balls."
+    },
+    {
+      "caseId": "f-play-04",
+      "category": "Player analysis",
+      "question": "Which side does the batter on strike play for, and who is bowling to him?",
+      "expectedFacts": [
+        "India",
+        "Liam Carter",
+        "not Australia batter"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 25906,
+      "answer": "Aarav Sharma, the striker, is batting for India. He is currently facing bowler Liam Carter. (The bowler’s team is not specified in the provided data.)"
+    },
+    {
+      "caseId": "f-cause-01",
+      "category": "Causal",
+      "question": "Explain why momentum is positive here even though India still need a lot.",
+      "expectedFacts": [
+        "states momentum 20",
+        "cites the recent six / boundary / 11 runs",
+        "no speculation about quality / depth / fatigue / strategy",
+        "no later-match state"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26068,
+      "answer": "Momentum is marked POSITIVE with a score of 20 because India’s recent form shows 11 runs in the last six balls, including a six (the first ball) and a boundary, and key moments list a recent six and a four. These recent scoring events have boosted the momentum metric despite the larger target still ahead."
+    },
+    {
+      "caseId": "f-cause-02",
+      "category": "Causal",
+      "question": "Explain what is driving India's required run rate up to this level.",
+      "expectedFacts": [
+        "states 91 runs",
+        "states 55 balls",
+        "states 9.93",
+        "no speculation about quality / depth / fatigue / strategy",
+        "makes no prediction"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 31064,
+      "answer": "India’s required run rate is 9.93 because they are 86/3 after 65 balls and still need 91 runs from the remaining 55 balls. The gap between the current total (86) and the target (177) over the balls left creates that rate. No other factors are provided in the context."
+    },
+    {
+      "caseId": "f-cause-03",
+      "category": "Causal",
+      "question": "Explain why the situation is hard for India after that wicket.",
+      "expectedFacts": [
+        "states 10.24",
+        "states 116 needed",
+        "no numbers beyond the context",
+        "no speculation about quality / depth / fatigue / strategy",
+        "makes no prediction"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 31658,
+      "answer": "India are 61 for 3 after 52 balls and still need 116 runs from the remaining 68 balls, which means a required run rate of 10.24 runs per over. The momentum metric is –15, indicating a negative swing in their favour. Losing batter Kabir Nair (14 runs off 11 balls) adds pressure as they chase a steep target."
+    },
+    {
+      "caseId": "f-live-01",
+      "category": "Live context",
+      "question": "Describe the latest ball in full detail.",
+      "expectedFacts": [
+        "Kabir Nair",
+        "caught",
+        "Oscar Hayes",
+        "Jack Holloway",
+        "no speculation about quality / depth / fatigue / strategy",
+        "does not dump raw context (JSON keys / UUIDs)"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26098,
+      "answer": "The most recent ball was bowled by Jack Holloway to India’s Kabir Nair and resulted in a caught dismissal by Oscar Hayes, with no run added. Nair leaves the innings on 14 runs from 11 balls. This wicket reduces India to 61/4."
+    },
+    {
+      "caseId": "f-live-02",
+      "category": "Live context",
+      "question": "Who is bowling right now and how has he gone so far?",
+      "expectedFacts": [
+        "Jack Holloway",
+        "states 9 runs",
+        "does not give him a wicket",
+        "no numbers beyond the context"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 27085,
+      "answer": "Jack Holloway is the bowler on the crease. He has bowled 1 over, conceding 9 runs without taking a wicket so far."
+    },
+    {
+      "caseId": "f-live-03",
+      "category": "Live context",
+      "question": "Explain what has happened in this match so far.",
+      "expectedFacts": [
+        "Jack Holloway",
+        "states 1 run",
+        "no wicket / boundary invented",
+        "no numbers beyond the context"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 27686,
+      "answer": "Australia have begun their innings and are 1/0 after the first ball, with Jack Holloway on strike having scored a single off Vikram Rao. No boundaries or wickets have occurred yet, and the momentum metric is neutral. The match is still in its opening moments, so there is little else to report."
+    },
+    {
+      "caseId": "f-ball-01",
+      "category": "Recent-ball interpretation",
+      "question": "Explain what the sequence of recent deliveries says about how India are scoring.",
+      "expectedFacts": [
+        "states runs in recent balls (13) or itemizes the balls",
+        "mentions the four",
+        "mentions the six",
+        "no wicket asserted"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26218,
+      "answer": "In the last six balls India added 13 runs, with two boundaries—a four and a six—while the other deliveries yielded a single, a dot and a one‑run extra (no wicket fell). This shows they are mixing boundary hits with modest singles rather than relying on a steady stream of runs. The recent form therefore reflects a burst of scoring power punctuated by a few low‑output balls."
+    },
+    {
+      "caseId": "f-ball-02",
+      "category": "Recent-ball interpretation",
+      "question": "Summarize the recent six deliveries and tell me what the final ball was.",
+      "expectedFacts": [
+        "final ball a wicket",
+        "states 6 runs",
+        "mentions the four"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26155,
+      "answer": "In the last six deliveries the batter scored 1 run, then a dot ball, hit a four, added 1 run, faced another dot ball and was then dismissed on the sixth ball. The final ball was a wicket."
+    },
+    {
+      "caseId": "f-ball-03",
+      "category": "Recent-ball interpretation",
+      "question": "Did the six come before or after India's wicket? Explain using the key moments.",
+      "expectedFacts": [
+        "says after / later",
+        "cites an over (1.3 or 3.3)"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26473,
+      "answer": "The key moments show the wicket occurred at 1.3, while the six was recorded later at 3.3. Therefore, the six came after India’s wicket. This ordering follows the timestamps in the key moments list."
+    },
+    {
+      "caseId": "f-ball-04",
+      "category": "Recent-ball interpretation",
+      "question": "Explain how many dot balls there were in Australia's recent six deliveries.",
+      "expectedFacts": [
+        "states 2 dot balls",
+        "no wicket asserted"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 25816,
+      "answer": "Australia’s last six balls included two dot balls (the 2nd and 5th deliveries recorded 0 runs)."
+    },
+    {
+      "caseId": "f-press-01",
+      "category": "Pressure/situation",
+      "question": "Explain how much pressure India are under, given the asking rate and balls left.",
+      "expectedFacts": [
+        "states 9.93",
+        "states 91",
+        "states 55",
+        "no speculation about quality / depth / fatigue / strategy",
+        "makes no prediction"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26842,
+      "answer": "India have scored 86/3 and need 91 more runs from the remaining 55 balls, giving a required run rate of 9.93 runs per over. This means they must score at just under 10 runs an over to win, a demanding situation."
+    },
+    {
+      "caseId": "f-press-02",
+      "category": "Pressure/situation",
+      "question": "Explain the situation: how many wickets does India have in hand and what is the asking rate?",
+      "expectedFacts": [
+        "states 9.19",
+        "9 wickets in hand (or 1 down)",
+        "makes no prediction"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 28079,
+      "answer": "India has lost 1 wicket so far (the exact number of wickets remaining isn’t given). The required run rate to chase the target is 9.19 runs per over."
+    },
+    {
+      "caseId": "f-press-03",
+      "category": "Pressure/situation",
+      "question": "What is the situation for Australia given the target they are chasing?",
+      "expectedFacts": [
+        "corrects or questions the premise",
+        "states 52",
+        "does not invent a target"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 28172,
+      "answer": "Australia are 52 runs for 1 wicket after 36 balls (6 overs) in their chase. The required runs and target are not available in the current data."
+    },
+    {
+      "caseId": "f-prem-01",
+      "category": "Premise correction",
+      "question": "Why did India's required rate drop below 8 after the six?",
+      "expectedFacts": [
+        "corrects or questions the premise",
+        "states actual 9.93",
+        "does not affirm a drop below 8"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "ASSERTION_FAILURE",
+      "latencyMs": 25841,
+      "answer": "The context does not provide information about how the required run rate changed after the six, so I cannot answer that question.",
+      "failedAssertions": [
+        "states actual 9.93"
+      ]
+    },
+    {
+      "caseId": "f-prem-02",
+      "category": "Premise correction",
+      "question": "Why did Aarav Sharma get out?",
+      "expectedFacts": [
+        "corrects or questions the premise",
+        "names Kabir Nair",
+        "does not say Aarav was dismissed"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "ASSERTION_FAILURE",
+      "latencyMs": 25842,
+      "answer": "The provided context does not include any information about Aarav Sharma being dismissed, so I cannot explain why he got out.",
+      "failedAssertions": [
+        "names Kabir Nair"
+      ]
+    },
+    {
+      "caseId": "f-prem-03",
+      "category": "Premise correction",
+      "question": "Explain why Liam Carter conceded 24 runs in his 3 overs.",
+      "expectedFacts": [
+        "corrects or questions the premise",
+        "states 2 overs",
+        "states 24 runs",
+        "does not affirm 3 overs"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 25921,
+      "answer": "The context shows that Liam Carter has bowled 2 overs and conceded 24 runs, but it does not provide details about a third over or reasons for the runs given. Therefore, an explanation for 24 runs in 3 overs cannot be supplied from the available data."
+    },
+    {
+      "caseId": "f-prem-04",
+      "category": "Premise correction",
+      "question": "Why did Australia lose a wicket so early in the innings?",
+      "expectedFacts": [
+        "corrects or questions the premise",
+        "does not affirm a wicket",
+        "no numbers beyond the context"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "PASS",
+      "latencyMs": 26031,
+      "answer": "The current data shows Australia has not lost any wicket yet (wickets = 0). No wicket event is recorded in the recent balls or live feed. Therefore the reason for an early wicket cannot be provided from the available information."
+    },
+    {
+      "caseId": "f-prem-05",
+      "category": "Premise correction",
+      "question": "Why did India hit three sixes in the last few overs?",
+      "expectedFacts": [
+        "corrects or questions the premise",
+        "one six",
+        "does not affirm three sixes"
+      ],
+      "run": 1,
+      "route": "LLM",
+      "status": "ASSERTION_FAILURE",
+      "latencyMs": 28966,
+      "answer": "The match data does not show three sixes in the recent overs, so I cannot answer that.",
+      "failedAssertions": [
+        "one six"
+      ]
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Give the AI reliability work a measured starting point. Later changes (richer context, deterministic routing, refusals, provider retry, validator/fallback improvements) can be compared against this baseline.
+Two suites: the 45-case baseline (`cases.ts`, default) and the 30-question hard suite (`cases.final.ts`, `EVAL_SUITE=final`). Results and the manual review are summarised in the root README. Give the AI reliability work a measured starting point. Later changes (richer context, deterministic routing, refusals, provider retry, validator/fallback improvements) can be compared against this baseline.
 
 ## What is measured
 
@@ -43,7 +43,7 @@ Every case runs 3 times (120 executions) because LLM output varies. Each executi
 | `TIMEOUT` | Provider or harness (45 s) timeout |
 | `PARSE_ERROR` | Empty or unparseable provider output |
 
-There is no retry in the harness or the provider. `EVAL_DELAY_MS` (default 1500) only spaces calls out.
+There is no retry in the harness or the provider. `EVAL_DELAY_MS` (default 4000) only spaces calls out.
 
 ## Deterministic assertions (`assertions.ts`)
 
@@ -75,3 +75,15 @@ Type-check the harness with `npx tsc -p evals` (the root `tsc` only covers `src/
 - Fixtures now carry `live` (batter, bowler, latest event). Fixture E is a wicket position (61/3, caught); D is an early replay position. The `live` blocks are hand-authored.
 - 45 cases: the original 40 plus 5 "Live context" cases. Stat-01/02 now expect an answer because the batter on strike has stats in `live`.
 - `tests/ai.eval.test.ts` (runs under `npm test`, no network) is the deterministic half: exact router answers on fixtures A/D/E/B, explanations route to the LLM, unsupported/predictive questions never reach the provider, injection and leak shapes are blocked by the safety guard, live context is present in the prompt and an early replay prompt contains no later state, and extra provider-retry bounds (5xx, non-retryable 4xx, 3-call cap, 40 s budget).
+
+## Final hard suite (`EVAL_SUITE=final`)
+
+30 unique questions in 8 categories (statistical reasoning, momentum, player analysis, causal, live context, recent-ball interpretation, pressure/situation, premise correction). All 30 are routed to the LLM (checked by running the router over the fixtures); 23 expect an answer and 7 expect a premise correction. Expected facts are derived from `fixtures.ts` and the derivation is written next to each case. Each stored execution records the question, category, expected facts (assertion names), answer, status and failed assertions.
+
+```bash
+EVAL_SUITE=final EVAL_RUNS=1 EVAL_DELAY_MS=25000 npm run eval:ai
+```
+
+Pacing: Groq's limit on the key used is 8,000 tokens per minute and each call (prompt, context and reasoning tokens) uses a few thousand, so 4 s pacing hits 429s. 25 s pacing completes the suite with no provider errors (about 13 minutes). Provider errors, timeouts and parse errors stay separate from assertion failures, and a provider 429 is never counted as a wrong answer.
+
+Known assertion limits (see the manual review in the root README): `noUngroundedNumbers` allows any number 0-12, `hasNum` matches a number anywhere in the answer, and `corrects` accepts generic negations, so a wrong small number or a vague correction can pass. Read the stored answers, not only the pass rate.

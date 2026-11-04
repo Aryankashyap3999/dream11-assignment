@@ -9,6 +9,9 @@ const ballStyle = (b: RecentBall) =>
       ? 'bg-emerald-500 text-zinc-950'
       : 'bg-zinc-800 text-zinc-300'
 
+const ballLabel = (b: RecentBall) =>
+  b.isWicket ? 'Wicket' : b.isBoundary ? (b.totalRuns >= 6 ? 'Six' : 'Four') : b.totalRuns === 0 ? 'Dot ball' : `${b.totalRuns} run${b.totalRuns === 1 ? '' : 's'}`
+
 export default function LastSixBalls({ matchId }: { matchId: string }) {
   const { data, isLoading, isError } = useMatchAnalysis(matchId)
   const balls = data?.recentForm.last6Balls ?? []
@@ -20,6 +23,8 @@ export default function LastSixBalls({ matchId }: { matchId: string }) {
           {balls.map((b, i) => (
             <span
               key={i}
+              title={ballLabel(b)}
+              aria-label={ballLabel(b)}
               className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${ballStyle(b)}`}
             >
               {b.isWicket ? 'W' : b.totalRuns}

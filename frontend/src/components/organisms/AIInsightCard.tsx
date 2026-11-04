@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { RefreshCw, Sparkles } from 'lucide-react'
 import { useMatchInsights } from '../../hooks/apis/ai'
 import { apiErrorMessage } from '../../utils/errors'
 import Card from '../atoms/Card'
@@ -11,17 +11,22 @@ const Block = ({ label, text }: { label: string; text: string }) => (
 )
 
 export default function AIInsightCard({ matchId }: { matchId: string }) {
-  const { data, isLoading, isError, error, refetch } = useMatchInsights(matchId)
+  const { data, isLoading, isError, error, isFetching, refetch } = useMatchInsights(matchId)
+  const message = apiErrorMessage(error, 'AI insights are unavailable right now.')
 
   return (
-    <Card
-      className="border-emerald-500/30"
-      isLoading={isLoading}
-      isError={isError}
-      errorText={apiErrorMessage(error, 'AI insights are unavailable right now.')}
-    >
+    // A failed refresh keeps the last insight on screen; the error card only replaces an empty one.
+    <Card className="border-emerald-500/30" isLoading={isLoading} isError={isError && !data} errorText={message}>
       <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
         <Sparkles size={14} className="text-emerald-400" /> What just changed?
+        <button
+          onClick={() => refetch()}
+          disabled={isFetching}
+          title="Generate a fresh insight for the current match state"
+          className="ml-auto inline-flex items-center gap-1 rounded text-[11px] font-semibold normal-case tracking-normal text-zinc-400 hover:text-emerald-400 disabled:opacity-40"
+        >
+          <RefreshCw size={12} className={isFetching ? 'animate-spin' : ''} /> {isFetching ? 'Updating…' : 'Refresh'}
+        </button>
       </div>
       {data ? (
         <div className="space-y-4">
@@ -29,6 +34,7 @@ export default function AIInsightCard({ matchId }: { matchId: string }) {
           <Block label="What changed" text={data.whatChanged} />
           <Block label="Why it matters" text={data.whyItMatters} />
           <Block label="Watch next" text={data.watchNext} />
+          {isError && <p className="text-xs text-zinc-500">{message}</p>}
         </div>
       ) : (
         <button onClick={() => refetch()} className="mt-3 text-sm text-emerald-400 hover:underline">
